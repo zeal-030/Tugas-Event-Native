@@ -90,32 +90,39 @@ $base_url = (strpos($current_uri, '/admin/venue/') !== false || strpos($current_
 </div>
 
 <script>
-// Logic Mode Terang/Gelap
-const html = document.documentElement;
-const themeText = document.getElementById('theme-text');
-const themeIcon = document.querySelector('#theme-btn i');
-
-// Ambil dari local storage pas refresh
-const savedTheme = localStorage.getItem('theme') || 'dark';
-html.setAttribute('data-theme', savedTheme);
-updateThemeUI(savedTheme);
-
-function toggleTheme() {
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+(function() {
+    /** 
+     * Logic Mode Terang/Gelap
+     * Dibungkus IIFE untuk menghindari konflik variabel (seperti savedTheme) 
+     * yang mungkin sudah dideklarasikan di head.php
+     */
     
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeUI(newTheme);
-}
+    window.updateThemeUI = function(theme) {
+        const themeText = document.getElementById('theme-text');
+        const themeIcon = document.querySelector('#theme-btn i');
+        if (!themeText || !themeIcon) return;
 
-function updateThemeUI(theme) {
-    if (theme === 'light') {
-        themeText.innerText = 'Light';
-        themeIcon.className = 'bi bi-sun';
-    } else {
-        themeText.innerText = 'Dark';
-        themeIcon.className = 'bi bi-moon-stars';
+        if (theme === 'light') {
+            themeText.innerText = 'Light';
+            themeIcon.className = 'bi bi-sun';
+        } else {
+            themeText.innerText = 'Dark';
+            themeIcon.className = 'bi bi-moon-stars';
+        }
     }
-}
+
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeUI(newTheme);
+    }
+
+    // Jalankan update UI pertama kali berdasarkan yang tersimpan
+    const initialTheme = localStorage.getItem('theme') || 'dark';
+    updateThemeUI(initialTheme);
+})();
 </script>

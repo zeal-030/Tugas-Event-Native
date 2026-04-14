@@ -12,12 +12,21 @@ $orders  = query("SELECT o.*, v.kode_voucher, v.potongan FROM orders o LEFT JOIN
     <title>My Tickets — EventTiket</title>
     <?php $is_sub = true; include '../includes/head.php'; ?>
     <style>
-        .ticket-item { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 24px; padding: 1.5rem; margin-bottom: 1.5rem; transition: transform 0.3s; }
-        .ticket-item:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .qr-card { background: white; padding: 10px; border-radius: 12px; display: inline-block; }
-        .ticket-badge { font-size: 0.65rem; padding: 0.3rem 0.6rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; }
-        .badge-ready { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .badge-used { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .ticket-item { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 24px; padding: 1.5rem; margin-bottom: 1.5rem; transition: all 0.3s; }
+        .ticket-item:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-md); }
+        .qr-card-mini { background: white; padding: 5px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .qr-card-mini:hover { border-color: var(--primary); }
+        .ticket-badge { font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-ready { background: #10b981; color: white; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+        .badge-used { background: var(--bg-elevated); color: var(--text-muted); border: 1px solid var(--border); }
+        .text-muted { color: #8e8ea8 !important; } /* Mencerahkan teks muted */
+        
+        /* Modal Ticket Style */
+        .modal-ticket { background: #11111d; color: white; border-radius: 25px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .ticket-top { background: var(--gradient-primary); padding: 2rem; position: relative; }
+        .ticket-top::after { content: ''; position: absolute; bottom: -15px; left: 0; right: 0; height: 30px; background: #11111d; clip-path: polygon(0% 50%, 5% 100%, 10% 50%, 15% 100%, 20% 50%, 25% 100%, 30% 50%, 35% 100%, 40% 50%, 45% 100%, 50% 50%, 55% 100%, 60% 50%, 65% 100%, 70% 50%, 75% 100%, 80% 50%, 85% 100%, 90% 50%, 95% 100%, 100% 50%); }
+        .ticket-bottom { padding: 2.5rem 2rem 2rem; text-align: center; }
+        .qr-large { background: white; padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 1.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 5px solid #f8fafc; }
     </style>
 </head>
 <body>
@@ -27,7 +36,7 @@ $orders  = query("SELECT o.*, v.kode_voucher, v.potongan FROM orders o LEFT JOIN
 <div class="main-content">
     <div class="page-header">
         <div class="page-title">My Tickets 🎟️</div>
-        <div class="page-subtitle">Kelola dan unduh QR Code tiket kamu untuk check-in</div>
+        <div class="page-subtitle">Klik tiket untuk melihat detail lengkap dan QR Code</div>
     </div>
 
     <div class="page-body">
@@ -48,43 +57,53 @@ $orders  = query("SELECT o.*, v.kode_voucher, v.potongan FROM orders o LEFT JOIN
                     <div class="text-muted small"><?= date('d M Y, H:i', strtotime($o['tanggal_order'])) ?></div>
                 </div>
                 <div class="text-end">
-                    <span class="badge bg-primary bg-opacity-10 text-primary small">Status: <?= strtoupper($o['status']) ?></span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary small">Order: <?= strtoupper($o['status']) ?></span>
                 </div>
             </div>
 
             <?php 
             $id_order = $o['id_order'];
-            $details = query("SELECT od.*, t.nama_tiket, e.nama_event FROM order_detail od JOIN tiket t ON od.id_tiket = t.id_tiket JOIN event e ON t.id_event = e.id_event WHERE od.id_order = $id_order");
+            $details = query("SELECT od.*, t.nama_tiket, e.nama_event, v.nama_venue, v.alamat, e.tanggal 
+                             FROM order_detail od 
+                             JOIN tiket t ON od.id_tiket = t.id_tiket 
+                             JOIN event e ON t.id_event = e.id_event 
+                             JOIN venue v ON e.id_venue = v.id_venue
+                             WHERE od.id_order = $id_order");
             foreach($details as $d): 
                 $id_detail = $d['id_detail'];
                 $attendees = query("SELECT * FROM attendee WHERE id_detail = $id_detail");
             ?>
             <div class="mb-4 pb-3 border-bottom border-white border-opacity-5">
-                <h5 class="fw-bold mb-3"><?= $d['nama_event'] ?> <span class="text-muted small fw-normal">(<?= $d['nama_tiket'] ?>)</span></h5>
+                <h5 class="fw-bold mb-1"><?= $d['nama_event'] ?></h5>
+                <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> <?= $d['nama_venue'] ?></p>
                 
                 <div class="row g-3">
                     <?php foreach($attendees as $tk): 
-                        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . $tk['kode_tiket'];
+                        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . $tk['kode_tiket'];
+                        $ticket_data = [
+                            'event' => $d['nama_event'],
+                            'venue' => $d['nama_venue'],
+                            'alamat' => $d['alamat'],
+                            'tanggal' => date('d M Y', strtotime($d['tanggal'])),
+                            'tiket' => $d['nama_tiket'],
+                            'kode' => $tk['kode_tiket'],
+                            'status' => $tk['status_checkin'],
+                            'qr' => $qr_url
+                        ];
                     ?>
                     <div class="col-md-6 col-lg-4">
-                        <div class="bg-elevated p-3 rounded-4 d-flex align-items-center gap-3">
-                            <div class="qr-card">
-                                <img src="<?= $qr_url ?>" alt="QR" width="80" height="80">
+                        <div class="bg-elevated p-3 rounded-4 d-flex align-items-center gap-3" 
+                             style="cursor: pointer;" 
+                             onclick="showDetail(<?= htmlspecialchars(json_encode($ticket_data)) ?>)">
+                            <div class="qr-card-mini">
+                                <img src="<?= $qr_url ?>" alt="QR" width="60" height="60">
                             </div>
-                            <div class="flex-fill">
-                                <div class="small text-muted mb-1">Ticket Code</div>
-                                <code class="d-block mb-2 fw-bold" style="color: var(--text-primary);"><?= $tk['kode_tiket'] ?></code>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <?php if($tk['status_checkin'] == 'sudah'): ?>
-                                        <span class="ticket-badge badge-used">Sudah Check-in</span>
-                                    <?php else: ?>
-                                        <span class="ticket-badge badge-ready">Ready to Use</span>
-                                    <?php endif; ?>
-                                    
-                                    <button onclick="downloadQR('<?= $qr_url ?>', '<?= $tk['kode_tiket'] ?>')" class="btn btn-ghost btn-sm p-1" title="Download QR">
-                                        <i class="bi bi-download"></i>
-                                    </button>
-                                </div>
+                            <div class="flex-fill overflow-hidden">
+                                <div class="small text-muted mb-0"><?= $d['nama_tiket'] ?></div>
+                                <code class="d-block mb-1 text-truncate" style="color: var(--text-primary);"><?= $tk['kode_tiket'] ?></code>
+                                <span class="ticket-badge <?= $tk['status_checkin'] == 'sudah' ? 'badge-used' : 'badge-ready' ?>">
+                                    <?= $tk['status_checkin'] == 'sudah' ? 'Checked-in' : 'Klik Detail' ?>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -92,34 +111,68 @@ $orders  = query("SELECT o.*, v.kode_voucher, v.potongan FROM orders o LEFT JOIN
                 </div>
             </div>
             <?php endforeach; ?>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted small">Total Pembayaran: <strong class="text-white">Rp <?= number_format($o['total'], 0, ',', '.') ?></strong></div>
-                <div style="font-size: 0.7rem; color: var(--text-muted);">Tunjukkan QR Code di atas kepada petugas saat masuk venue.</div>
-            </div>
         </div>
         <?php endforeach; ?>
     </div>
 </div>
 
+<!-- Modal Detail Tiket -->
+<div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-ticket">
+            <div class="ticket-top">
+                <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="badge bg-white text-dark small fw-bold mb-2">E-TICKET EVENT</div>
+                <h3 class="fw-bold mb-1" id="m_event"></h3>
+                <div class="small opacity-75" id="m_tanggal"></div>
+            </div>
+            <div class="ticket-bottom">
+                <div class="qr-large">
+                    <img id="m_qr" src="" alt="QR" width="180">
+                </div>
+                <div class="mb-4">
+                    <div class="small text-muted text-uppercase tracking-wider mb-1">Ticket Holder Code</div>
+                    <div class="h4 fw-bold text-primary mb-3" id="m_kode"></div>
+                    <div class="row text-start g-3">
+                        <div class="col-6">
+                            <label class="small text-muted d-block">Tiket Type</label>
+                            <span class="fw-bold" id="m_tipe"></span>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-muted d-block">Status</label>
+                            <span class="fw-bold" id="m_status text-success">READY</span>
+                        </div>
+                        <div class="col-12">
+                            <label class="small text-muted d-block">Location</label>
+                            <span class="small" id="m_venue"></span><br>
+                            <span class="text-muted" style="font-size: 0.7rem;" id="m_alamat"></span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="window.print()" class="btn btn-outline-primary w-100 rounded-pill mt-2">
+                    <i class="bi bi-printer me-2"></i> Download / Print Ticket
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-async function downloadQR(url, filename) {
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `Ticket_${filename}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-        alert("Gagal mendownload QR Code. Coba Klik kanan pada gambar lalu simpan.");
-    }
+function showDetail(data) {
+    document.getElementById('m_event').innerText = data.event;
+    document.getElementById('m_tanggal').innerText = "📅 " + data.tanggal;
+    document.getElementById('m_qr').src = data.qr;
+    document.getElementById('m_kode').innerText = data.kode;
+    document.getElementById('m_tipe').innerText = data.tiket;
+    document.getElementById('m_venue').innerText = data.venue;
+    document.getElementById('m_alamat').innerText = data.alamat;
+    
+    const myModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+    myModal.show();
 }
 </script>
+
+<?php include '../includes/footer.php'; ?>
 
 </body>
 </html>
