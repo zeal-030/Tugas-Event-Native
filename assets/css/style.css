@@ -24,8 +24,8 @@
 
     /* Text */
     --text-primary: #f0f0ff;
-    --text-secondary: #9191b0;
-    --text-muted: #5a5a78;
+    --text-secondary: #a1a1c8;
+    --text-muted: #8282a5;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);

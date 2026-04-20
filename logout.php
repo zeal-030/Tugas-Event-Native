@@ -1,7 +1,4 @@
 <?php
-session_start();
-session_unset();
-session_destroy();
-header("Location: login.php");
-exit;
-?>
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/app/controllers/AuthController.php';
+(new AuthController())->logout();

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 require_once 'config/db.php';
 
@@ -384,26 +384,26 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
     <div class="banner-content">
         <div class="container">
             <a href="index.php" class="banner-breadcrumb">
-                <i class="bi bi-house"></i> Home <i class="bi bi-chevron-right"></i>
+                <i class="ri-home-4-line"></i> Home <i class="ri-arrow-right-s-line"></i>
                 <span style="color: rgba(255,255,255,0.8);">Event Detail</span>
             </a>
             <br>
             <div class="banner-date-tag">
-                <i class="bi bi-calendar3"></i>
+                <i class="ri-calendar-3-line"></i>
                 <?= date('d M Y', strtotime($event['tanggal'])) ?>
             </div>
             <h1 class="banner-title"><?= htmlspecialchars($event['nama_event']) ?></h1>
             <div class="banner-meta">
                 <span class="banner-meta-item">
-                    <i class="bi bi-geo-alt-fill"></i>
+                    <i class="ri-map-pin-fill"></i>
                     <?= htmlspecialchars($event['nama_venue']) ?>
                 </span>
                 <span class="banner-meta-item">
-                    <i class="bi bi-map"></i>
+                    <i class="ri-map-2-line"></i>
                     <?= htmlspecialchars($event['alamat']) ?>
                 </span>
                 <span class="banner-meta-item">
-                    <i class="bi bi-people-fill"></i>
+                    <i class="ri-team-line-fill"></i>
                     Kapasitas <?= number_format($event['kapasitas']) ?> Pax
                 </span>
             </div>
@@ -421,13 +421,13 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
             <!-- Ticket Selection -->
             <div class="mb-5">
                 <div class="detail-section-title">
-                    <i class="bi bi-ticket-perforated-fill"></i>
+                    <i class="ri-ticket-2-line-fill"></i>
                     Pilih Kategori Tiket
                 </div>
 
                 <?php if (empty($tikets)): ?>
                 <div class="empty-tickets">
-                    <i class="bi bi-ticket-detailed"></i>
+                    <i class="ri-ticket-line-detailed"></i>
                     <p>Belum ada tiket tersedia untuk event ini.</p>
                 </div>
                 <?php else: ?>
@@ -438,7 +438,7 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
                     ?>
                     <div class="ticket-card">
                         <div class="ticket-card-icon">
-                            <i class="bi bi-ticket-perforated"></i>
+                            <i class="ri-ticket-2-line"></i>
                         </div>
                         <div class="ticket-card-info">
                             <div class="ticket-card-name"><?= htmlspecialchars($t['nama_tiket']) ?></div>
@@ -461,11 +461,11 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
                                 <span style="font-size:0.78rem; color:var(--text-muted); border:1px solid var(--border); border-radius:10px; padding:0.5rem 1rem;">Habis</span>
                             <?php elseif (isset($_SESSION['login'])): ?>
                                 <a href="user/pesan.php?id=<?= $event['id_event'] ?>" class="btn-ticket-buy">
-                                    <i class="bi bi-bag-check"></i> Beli Sekarang
+                                    <i class="ri-shopping-bag-4-line"></i> Beli Sekarang
                                 </a>
                             <?php else: ?>
                                 <a href="login.php" class="btn-ticket-login">
-                                    <i class="bi bi-person"></i> Login untuk Beli
+                                    <i class="ri-user-line"></i> Login untuk Beli
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -492,7 +492,7 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
 
             <!-- Info Note -->
             <div class="info-note mt-4">
-                <div class="info-note-icon"><i class="bi bi-info-circle-fill"></i></div>
+                <div class="info-note-icon"><i class="ri-information-fill"></i></div>
                 <div class="info-note-text">
                     <strong style="color: var(--accent); display: block; margin-bottom: 0.25rem;">Cara Kerja Tiket Digital</strong>
                     Tiket akan langsung di-generate dalam bentuk <strong>kode QR unik</strong> setelah pembayaran dikonfirmasi.
@@ -505,7 +505,7 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
         <div class="col-lg-4">
             <div class="info-card">
                 <div class="info-card-header">
-                    <i class="bi bi-map-fill"></i>
+                    <i class="ri-map-2-line-fill"></i>
                     Informasi Event
                 </div>
 
@@ -547,11 +547,11 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
 
                     <?php if (!isset($_SESSION['login'])): ?>
                     <a href="login.php" class="btn-ticket-buy" style="width:100%; justify-content:center; margin-top:1rem;">
-                        <i class="bi bi-person-check"></i> Login & Beli Tiket
+                        <i class="ri-user-line-check"></i> Login & Beli Tiket
                     </a>
                     <?php else: ?>
                     <a href="user/pesan.php?id=<?= $event['id_event'] ?>" class="btn-ticket-buy" style="width:100%; justify-content:center; margin-top:1rem;">
-                        <i class="bi bi-bag-check-fill"></i> Pesan Tiket Sekarang
+                        <i class="ri-shopping-bag-4-fill"></i> Pesan Tiket Sekarang
                     </a>
                     <?php endif; ?>
                 </div>

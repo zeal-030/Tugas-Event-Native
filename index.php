@@ -12,7 +12,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>EventTiket — Platform Manajemen Tiket Modern</title>
+    <title>E-Tiket — Platform Manajemen Tiket Modern</title>
     <meta name="description" content="Platform tiket event modern dengan QR check-in, voucher diskon, dan manajemen real-time.">
     <?php include 'includes/head.php'; ?>
     <style>
@@ -486,7 +486,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
     <div class="hero-bg"></div>
 
     <div class="hero-content">
-        <div class="hero-badge">🚀 Platform Tiket Event Modern</div>
+        <div class="hero-badge"><i class="ri-rocket-2-fill" style="margin-right: 5px;"></i> Platform Tiket Event Modern</div>
 
         <h1 class="hero-title">
             Temukan Pengalaman
@@ -499,15 +499,15 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
 
         <div class="hero-actions">
             <a href="#events" class="btn-hero-primary">
-                <i class="bi bi-calendar-event"></i> Lihat Event
+                <i class="ri-calendar-event-line"></i> Lihat Event
             </a>
             <?php if (!isset($_SESSION['login'])): ?>
             <a href="login.php" class="btn-hero-ghost">
-                <i class="bi bi-person-plus"></i> Daftar Gratis
+                <i class="ri-user-add-line"></i> Daftar Gratis
             </a>
             <?php else: ?>
             <a href="user/dashboard.php" class="btn-hero-ghost">
-                <i class="bi bi-grid"></i> Dashboard
+                <i class="ri-layout-grid-line"></i> Dashboard
             </a>
             <?php endif; ?>
         </div>
@@ -515,7 +515,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
 
     <div class="scroll-hint">
         <span>Scroll</span>
-        <i class="bi bi-chevron-down"></i>
+        <i class="ri-arrow-down-s-line" style="font-size: 1.2rem;"></i>
     </div>
 </section>
 
@@ -565,34 +565,34 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
     <div class="container">
         <div class="text-center mb-5">
             <div class="section-tag">Keunggulan</div>
-            <h2 class="section-title">Kenapa <span class="text-gradient">EventTiket?</span></h2>
+            <h2 class="section-title">Kenapa <span class="text-gradient">E-Tiket?</span></h2>
             <p class="section-sub">Fitur canggih untuk penyelenggara event dan para pembeli tiket.</p>
         </div>
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
                 <div class="feat-card">
-                    <div class="feat-icon purple"><i class="bi bi-shield-check"></i></div>
+                    <div class="feat-icon purple"><i class="ri-shield-check-line"></i></div>
                     <div class="feat-title">Sistem Aman</div>
                     <p class="feat-desc">Transaksi aman dengan enkripsi dan kode tiket unik untuk setiap peserta guna mencegah pemalsuan.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="feat-card">
-                    <div class="feat-icon teal"><i class="bi bi-qr-code-scan"></i></div>
+                    <div class="feat-icon teal"><i class="ri-qr-scan-2-line"></i></div>
                     <div class="feat-title">QR Check-in</div>
                     <p class="feat-desc">Proses validasi kehadiran di venue hanya dalam hitungan detik menggunakan kamera dan QR Code.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="feat-card">
-                    <div class="feat-icon cyan"><i class="bi bi-lightning-charge"></i></div>
+                    <div class="feat-icon cyan"><i class="ri-flashlight-fill"></i></div>
                     <div class="feat-title">Transaksi Cepat</div>
                     <p class="feat-desc">Proses pembelian tiket yang simpel, cepat, dan bisa dilakukan kapan saja dari perangkat manapun.</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
                 <div class="feat-card">
-                    <div class="feat-icon amber"><i class="bi bi-gift"></i></div>
+                    <div class="feat-icon amber"><i class="ri-gift-2-line"></i></div>
                     <div class="feat-title">Voucher Diskon</div>
                     <p class="feat-desc">Gunakan berbagai kode promo menarik untuk mendapatkan harga tiket terbaik bagi event favoritmu.</p>
                 </div>
@@ -611,13 +611,13 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                 <p class="section-sub m-0">Jangan sampai ketinggalan, amankan tiketmu sekarang!</p>
             </div>
             <a href="login.php" class="btn-hero-ghost" style="padding: 0.5rem 1.25rem; font-size: 0.82rem; border-radius: 10px;">
-                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+                Lihat Semua <i class="ri-arrow-right-line ms-1"></i>
             </a>
         </div>
 
         <?php if (empty($featured_events)): ?>
         <div style="text-align:center; padding: 4rem; color: var(--text-muted);">
-            <i class="bi bi-calendar-x" style="font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.4;"></i>
+            <i class="ri-calendar-close-line" style="font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.4;"></i>
             <p>Belum ada event tersedia.</p>
         </div>
         <?php else: ?>
@@ -635,10 +635,10 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                                  onerror="this.parentElement.style.background='var(--gradient-primary)'; this.remove();">
                         <?php else: ?>
                             <!-- Placeholder gradient with icon -->
-                            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; opacity:0.4;">🎪</div>
+                            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; opacity:0.4;"><i class="ri-tent-fill" style="color:white;"></i></div>
                         <?php endif; ?>
                         <div class="ev-img-overlay"></div>
-                        <div class="ev-date-tag"><i class="bi bi-calendar3"></i> <?= date('d M Y', strtotime($e['tanggal'])) ?></div>
+                        <div class="ev-date-tag"><i class="ri-calendar-3-line"></i> <?= date('d M Y', strtotime($e['tanggal'])) ?></div>
                         <?php if ($isFree): ?>
                         <div class="ev-category-tag">GRATIS</div>
                         <?php endif; ?>
@@ -647,7 +647,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                     <div class="ev-body">
                         <h3 class="ev-name"><?= htmlspecialchars($e['nama_event']) ?></h3>
                         <div class="ev-venue">
-                            <i class="bi bi-geo-alt-fill"></i>
+                            <i class="ri-map-pin-fill"></i>
                             <span><?= htmlspecialchars($e['nama_venue']) ?></span>
                         </div>
                     </div>
@@ -682,7 +682,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                 <div class="col-lg-5 text-lg-end" style="position:relative; z-index:1;">
                     <div class="d-flex gap-3 flex-wrap justify-content-lg-end">
                         <a href="login.php" class="btn-hero-primary">
-                            <i class="bi bi-person-check"></i> Mulai Sekarang
+                            <i class="ri-user-follow-line"></i> Mulai Sekarang
                         </a>
                         <a href="#events" class="btn-hero-ghost">
                             Jelajahi Event
@@ -700,8 +700,8 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
         <div class="row align-items-center g-3">
             <div class="col-md-6">
                 <div class="footer-brand">
-                    <div class="footer-brand-icon">🎟️</div>
-                    <span class="footer-brand-name">EventTiket</span>
+                    <div class="footer-brand-icon"><i class="ri-ticket-2-fill" style="color:white;"></i></div>
+                    <span class="footer-brand-name">E-Tiket</span>
                 </div>
                 <p class="footer-copy">Platform manajemen tiket event modern yang aman dan cepat.</p>
             </div>
@@ -712,7 +712,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                     <a href="#features">Fitur</a>
                     <a href="login.php">Login</a>
                 </div>
-                <p class="footer-copy mt-2">© <?= date('Y') ?> EventTiket. All rights reserved.</p>
+                <p class="footer-copy mt-2">© <?= date('Y') ?> E-Tiket. All rights reserved.</p>
             </div>
         </div>
     </div>
