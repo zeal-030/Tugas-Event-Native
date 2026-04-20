@@ -24,6 +24,7 @@ $recent_events = query("SELECT e.*, v.nama_venue FROM event e JOIN venue v ON e.
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -98,85 +99,120 @@ $recent_events = query("SELECT e.*, v.nama_venue FROM event e JOIN venue v ON e.
             </div>
         </div>
 
+        <div class="row g-3 mb-4">
+            <div class="col-lg-8">
+                <div class="table-wrapper p-4">
+                    <h5 class="fw-bold mb-4">Revenue Trend (Last 7 Days)</h5>
+                    <div style="height: 250px;"><canvas id="revenueChart"></canvas></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="table-wrapper p-4">
+                    <h5 class="fw-bold mb-4">Distribution</h5>
+                    <div style="height: 250px;"><canvas id="distChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+        <!-- Recent Transactions & Upcoming Events -->
         <div class="row g-3">
-            <!-- Recent Transactions -->
-            <div class="col-md-8">
-                <div class="table-wrapper">
+            <div class="col-lg-8">
+                <div class="table-wrapper" style="background: var(--bg-surface) !important;">
                     <div class="table-header">
                         <div class="table-title">🧾 Recent Transactions</div>
                         <a href="laporan.php" class="btn btn-ghost btn-sm">View All</a>
                     </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Order</th>
-                                <th>Customer</th>
-                                <th>Total</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($recent_orders as $o) : ?>
-                            <tr>
-                                <td><code>#ORD-<?= $o['id_order'] ?></code></td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                        <div style="width: 30px; height: 30px; background: var(--gradient-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: white; flex-shrink: 0;">
-                                            <?= strtoupper(substr($o['nama'], 0, 1)) ?>
-                                        </div>
-                                        <span style="color: var(--text-primary); font-weight: 500;"><?= $o['nama'] ?></span>
-                                    </div>
-                                </td>
-                                <td style="color: var(--primary-light); font-weight: 600;">Rp <?= number_format($o['total'], 0, ',', '.') ?></td>
-                                <td><?= date('d M, H:i', strtotime($o['tanggal_order'])) ?></td>
-                                <td>
-                                    <span class="badge-status badge-<?= $o['status'] ?>">
-                                        <?= strtoupper($o['status']) ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <?php if (empty($recent_orders)) : ?>
-                            <tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No transactions yet</td></tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table mb-0" style="background: transparent !important;">
+                            <thead>
+                                <tr style="background: transparent !important; border-bottom: 1px solid var(--border) !important;">
+                                    <th style="background: transparent !important; border: none;">Order</th>
+                                    <th style="background: transparent !important; border: none;">Customer</th>
+                                    <th style="background: transparent !important; border: none;">Total</th>
+                                    <th style="background: transparent !important; border: none;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: transparent !important;">
+                                <?php foreach ($recent_orders as $o) : ?>
+                                <tr style="background: transparent !important;">
+                                    <td style="background: transparent !important; border: none;"><code>#ORD-<?= $o['id_order'] ?></code></td>
+                                    <td class="text-white" style="background: transparent !important; border: none;"><?= $o['nama'] ?></td>
+                                    <td class="text-primary fw-bold" style="background: transparent !important; border: none;">Rp <?= number_format($o['total'], 0, ',', '.') ?></td>
+                                    <td style="background: transparent !important; border: none;"><span class="badge-status badge-<?= $o['status'] ?>"><?= strtoupper($o['status']) ?></span></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- Upcoming Events -->
-            <div class="col-md-4">
-                <div class="card" style="height: 100%;">
-                    <div class="card-header-custom">
-                        <div class="card-title">📅 Upcoming Events</div>
-                        <a href="event/index.php" style="font-size:0.78rem; color: var(--primary-light); text-decoration: none;">View all</a>
+            <div class="col-lg-4">
+                <div class="card p-4" style="height: 100%; background: var(--bg-surface) !important; border: 1px solid var(--border) !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0 text-white">📅 Events</h5>
+                        <a href="event/index.php" class="small text-decoration-none">View all</a>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <?php foreach ($recent_events as $i => $e) :
-                            $colors = ['#7c3aed','#06b6d4','#10b981','#f59e0b'];
-                            $c = $colors[$i % count($colors)];
-                        ?>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 42px; height: 42px; background: <?= $c ?>22; border: 1px solid <?= $c ?>44; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; color: <?= $c ?>;">
-                                📅
-                            </div>
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?= $e['nama_event'] ?></div>
-                                <div style="font-size: 0.72rem; color: var(--text-muted);"><?= date('d M Y', strtotime($e['tanggal'])) ?> · <?= $e['nama_venue'] ?></div>
+                    <div class="d-flex flex-column gap-3">
+                        <?php foreach ($recent_events as $e) : ?>
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                            <div class="stat-icon primary small" style="width:35px; height:35px; font-size:0.8rem; background: var(--gradient-primary); color: white;">📅</div>
+                            <div class="overflow-hidden">
+                                <div class="text-white fw-600 small text-truncate"><?= $e['nama_event'] ?></div>
+                                <div class="text-muted" style="font-size:0.75rem; color: #8e8ea8 !important;"><?= date('d M', strtotime($e['tanggal'])) ?> · <?= $e['nama_venue'] ?></div>
                             </div>
                         </div>
                         <?php endforeach; ?>
-                        <?php if (empty($recent_events)) : ?>
-                        <div style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.875rem;">No events yet</div>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Revenue Chart
+    const revCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revCtx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Revenue',
+                data: [1200000, 1900000, 3000000, 5000000, 2300000, 7000000, 9000000],
+                borderColor: '#7c3aed',
+                backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { display: false }, x: { grid: { display: false } } }
+        }
+    });
+
+    // Distribution Chart
+    const distCtx = document.getElementById('distChart').getContext('2d');
+    new Chart(distCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Concerts', 'Seminar', 'Workshop'],
+            datasets: [{
+                data: [55, 25, 20],
+                backgroundColor: ['#7c3aed', '#06b6d4', '#10b981'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { color: '#8e8ea8', padding: 20 } } }
+        }
+    });
+</script>
 </body>
 </html>

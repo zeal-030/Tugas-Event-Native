@@ -77,37 +77,61 @@ $orders  = query("SELECT o.*, v.kode_voucher, v.potongan FROM orders o LEFT JOIN
                 <h5 class="fw-bold mb-1"><?= $d['nama_event'] ?></h5>
                 <p class="text-muted small mb-3"><i class="bi bi-geo-alt"></i> <?= $d['nama_venue'] ?></p>
                 
-                <div class="row g-3">
-                    <?php foreach($attendees as $tk): 
-                        $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . $tk['kode_tiket'];
-                        $ticket_data = [
-                            'event' => $d['nama_event'],
-                            'venue' => $d['nama_venue'],
-                            'alamat' => $d['alamat'],
-                            'tanggal' => date('d M Y', strtotime($d['tanggal'])),
-                            'tiket' => $d['nama_tiket'],
-                            'kode' => $tk['kode_tiket'],
-                            'status' => $tk['status_checkin'],
-                            'qr' => $qr_url
-                        ];
-                    ?>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="bg-elevated p-3 rounded-4 d-flex align-items-center gap-3" 
-                             style="cursor: pointer;" 
-                             onclick="showDetail(<?= htmlspecialchars(json_encode($ticket_data)) ?>)">
-                            <div class="qr-card-mini">
-                                <img src="<?= $qr_url ?>" alt="QR" width="60" height="60">
-                            </div>
-                            <div class="flex-fill overflow-hidden">
-                                <div class="small text-muted mb-0"><?= $d['nama_tiket'] ?></div>
-                                <code class="d-block mb-1 text-truncate" style="color: var(--text-primary);"><?= $tk['kode_tiket'] ?></code>
-                                <span class="ticket-badge <?= $tk['status_checkin'] == 'sudah' ? 'badge-used' : 'badge-ready' ?>">
-                                    <?= $tk['status_checkin'] == 'sudah' ? 'Checked-in' : 'Klik Detail' ?>
-                                </span>
+                    <div class="row g-3">
+                        <?php foreach($attendees as $tk): 
+                            $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . $tk['kode_tiket'];
+                            $ticket_data = [
+                                'event'   => $d['nama_event'],
+                                'venue'   => $d['nama_venue'],
+                                'alamat'  => $d['alamat'],
+                                'tanggal' => date('d M Y', strtotime($d['tanggal'])),
+                                'tiket'   => $d['nama_tiket'],
+                                'kode'    => $tk['kode_tiket'],
+                                'status'  => $tk['status_checkin'],
+                                'qr'      => $qr_url
+                            ];
+                        ?>
+                        <div class="col-md-6 col-lg-4">
+                            <div onclick="showDetail(<?= htmlspecialchars(json_encode($ticket_data)) ?>)"
+                                 style="background: var(--bg-elevated);
+                                        border: 1px solid var(--border);
+                                        border-radius: 16px;
+                                        padding: 1rem;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.85rem;
+                                        cursor: pointer;
+                                        transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;" 
+                                 onmouseover="this.style.borderColor='rgba(124,58,237,0.5)'; this.style.boxShadow='0 4px 20px rgba(124,58,237,0.15)'; this.style.transform='translateY(-2px)';"
+                                 onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'; this.style.transform='translateY(0)';">
+                                <!-- QR Thumbnail -->
+                                <div style="background: white; padding: 5px; border-radius: 10px; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.1);">
+                                    <img src="<?= $qr_url ?>" alt="QR" width="60" height="60" style="display:block;">
+                                </div>
+                                <!-- Info -->
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: 500;"><?= htmlspecialchars($d['nama_tiket']) ?></div>
+                                    <div style="font-family: 'Courier New', monospace;
+                                                font-size: 0.78rem;
+                                                font-weight: 700;
+                                                color: var(--primary-light);
+                                                background: rgba(124,58,237,0.1);
+                                                border: 1px solid rgba(124,58,237,0.2);
+                                                border-radius: 7px;
+                                                padding: 0.25rem 0.5rem;
+                                                white-space: nowrap;
+                                                overflow: hidden;
+                                                text-overflow: ellipsis;
+                                                margin-bottom: 0.45rem;">
+                                        <?= htmlspecialchars($tk['kode_tiket']) ?>
+                                    </div>
+                                    <span class="ticket-badge <?= $tk['status_checkin'] == 'sudah' ? 'badge-used' : 'badge-ready' ?>">
+                                        <?= $tk['status_checkin'] == 'sudah' ? '✓ Checked-in' : '🔍 Klik Detail' ?>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
                 </div>
             </div>
             <?php endforeach; ?>

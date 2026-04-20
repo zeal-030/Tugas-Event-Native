@@ -397,36 +397,32 @@ body {
     justify-content: space-between;
 }
 
-.table-wrapper .table-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-primary);
+.table { 
+    margin: 0; 
+    color: var(--text-secondary); 
+    background: transparent !important;
 }
 
-.table { margin: 0; color: var(--text-secondary); }
-.table th {
-    background: rgba(255,255,255,0.02);
+.table :not(caption) > * > * {
+    background-color: transparent !important;
+    color: var(--text-primary);
+    border-bottom-color: var(--border);
+
+    vertical-align: middle;
+}
+
+.table thead th {
+    background: rgba(255,255,255,0.03) !important;
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--text-muted);
-    border-color: var(--border);
-    padding: 0.9rem 1.5rem;
-    white-space: nowrap;
 }
 
-.table td {
-    border-color: var(--border);
-    padding: 1rem 1.5rem;
-    vertical-align: middle;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    transition: background 0.2s;
+.table tbody tr:hover td { 
+    background: rgba(255,255,255,0.02) !important; 
 }
-
-.table tbody tr:hover td { background: rgba(255,255,255,0.02); }
-.table tbody tr:last-child td { border-bottom: none; }
 
 /* ======================== BADGES ======================== */
 .badge-status {
