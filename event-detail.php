@@ -1,6 +1,20 @@
-﻿<?php
+<?php
 session_start();
-require_once 'config/db.php';
+require_once 'bootstrap.php';
+$conn = getDbConnection();
+
+// Global query helper for legacy parts
+if (!function_exists('query')) {
+    function query($q) {
+        global $conn;
+        $res = mysqli_query($conn, $q);
+        $rows = [];
+        if ($res && !is_bool($res)) {
+            while ($row = mysqli_fetch_assoc($res)) $rows[] = $row;
+        }
+        return $rows;
+    }
+}
 
 if (!isset($_GET['id'])) { header("Location: index.php"); exit; }
 
@@ -15,6 +29,7 @@ if (!$event) { header("Location: index.php"); exit; }
 
 $imgSrc   = !empty($event['gambar']) ? "assets/img/events/" . $event['gambar'] : null;
 $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
+$isPastEvent = strtotime($event['tanggal']) < strtotime(date('Y-m-d'));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -195,7 +210,6 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
             letter-spacing: -0.5px;
             margin-bottom: 0.2rem;
         }
-        .ticket-card-price.free { color: #34d399; }
         .ticket-card-stock {
             font-size: 0.72rem;
             color: var(--text-muted);
@@ -432,7 +446,6 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
                 </div>
                 <?php else: ?>
                     <?php foreach ($tikets as $t): 
-                        $isFree   = $t['harga'] == 0;
                         $stockLow = $t['kuota'] > 0 && $t['kuota'] <= 10;
                         $noStock  = $t['kuota'] == 0;
                     ?>
@@ -442,8 +455,8 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
                         </div>
                         <div class="ticket-card-info">
                             <div class="ticket-card-name"><?= htmlspecialchars($t['nama_tiket']) ?></div>
-                            <div class="ticket-card-price <?= $isFree ? 'free' : '' ?>">
-                                <?= $isFree ? 'GRATIS' : 'Rp ' . number_format($t['harga'], 0, ',', '.') ?>
+                            <div class="ticket-card-price">
+                                Rp <?= number_format($t['harga'], 0, ',', '.') ?>
                             </div>
                             <div class="ticket-card-stock">
                                 <span class="stock-dot <?= $noStock ? 'empty' : ($stockLow ? 'low' : '') ?>"></span>
@@ -457,7 +470,9 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
                             </div>
                         </div>
                         <div>
-                            <?php if ($noStock): ?>
+                            <?php if ($isPastEvent): ?>
+                                <span style="font-size:0.78rem; color:var(--danger); border:1px solid var(--danger); border-radius:10px; padding:0.5rem 1rem;">Event Berakhir</span>
+                            <?php elseif ($noStock): ?>
                                 <span style="font-size:0.78rem; color:var(--text-muted); border:1px solid var(--border); border-radius:10px; padding:0.5rem 1rem;">Habis</span>
                             <?php elseif (isset($_SESSION['login'])): ?>
                                 <a href="user/pesan.php?id=<?= $event['id_event'] ?>" class="btn-ticket-buy">
@@ -540,12 +555,16 @@ $minPrice = !empty($tikets) ? min(array_column($tikets, 'harga')) : 0;
                     <div class="price-summary">
                         <div class="price-summary-label">Harga Tiket Mulai Dari</div>
                         <div class="price-summary-value">
-                            <?= $minPrice > 0 ? 'Rp ' . number_format($minPrice, 0, ',', '.') : 'GRATIS' ?>
+                            Rp <?= number_format($minPrice, 0, ',', '.') ?>
                         </div>
                     </div>
                     <?php endif; ?>
 
-                    <?php if (!isset($_SESSION['login'])): ?>
+                    <?php if ($isPastEvent): ?>
+                        <div class="alert alert-danger py-2 text-center" style="font-size: 0.8rem; border-radius: 12px; margin-top: 1rem;">
+                            <i class="ri-error-warning-line"></i> Penjualan tiket sudah ditutup.
+                        </div>
+                    <?php elseif (!isset($_SESSION['login'])): ?>
                     <a href="login.php" class="btn-ticket-buy" style="width:100%; justify-content:center; margin-top:1rem;">
                         <i class="ri-user-line-check"></i> Login & Beli Tiket
                     </a>

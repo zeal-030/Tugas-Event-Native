@@ -1,6 +1,20 @@
 <?php
 session_start();
-require_once '../config/db.php';
+require_once '../bootstrap.php';
+$conn = getDbConnection();
+
+// Global query helper
+if (!function_exists('query')) {
+    function query($q) {
+        global $conn;
+        $res = mysqli_query($conn, $q);
+        $rows = [];
+        if ($res && !is_bool($res)) {
+            while ($row = mysqli_fetch_assoc($res)) $rows[] = $row;
+        }
+        return $rows;
+    }
+}
 if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') { exit; }
 
 header("Content-Type: application/vnd.ms-excel");

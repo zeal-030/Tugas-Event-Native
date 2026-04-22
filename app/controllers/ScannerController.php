@@ -36,4 +36,18 @@ class ScannerController {
 
         require_once __DIR__ . '/../views/admin/scanner.php';
     }
+
+    public function list(): void {
+        requireAdmin();
+        require_once __DIR__ . '/../models/EventModel.php';
+        $eventModel = new EventModel();
+
+        $id_event = isset($_GET['event']) ? (int)$_GET['event'] : null;
+        $status   = isset($_GET['status']) ? $_GET['status'] : null;
+
+        $attendees = $this->attendeeModel->getFilteredAttendees($id_event, $status);
+        $events    = $eventModel->getAll();
+
+        require_once __DIR__ . '/../views/admin/checkin_list.php';
+    }
 }

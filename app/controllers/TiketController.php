@@ -42,11 +42,21 @@ class TiketController {
         $harga = (int)($_POST['harga'] ?? 0);
         $kuota = (int)($_POST['kuota'] ?? 0);
 
-        // Ambil kapasitas venue via event
+        // Ambil data event & kapasitas venue
         $event = $this->eventModel->findById($ide);
         $venue = $event ? $this->venueModel->findById((int)$event['id_venue']) : null;
 
+        // Validasi: Event sudah lewat tidak bisa buat tiket
+        if ($event && strtotime($event['tanggal']) < strtotime(date('Y-m-d'))) {
+            header('Location: ' . BASE_URL . '/admin/tiket.php?msg=err_date');
+            exit;
+        }
+
         if (isset($_POST['submit'])) {
+            if ($harga < 10000) {
+                header('Location: ' . BASE_URL . '/admin/tiket.php?msg=err_price');
+                exit;
+            }
             $total_existing = $this->tiketModel->getTotalKuota($ide);
             if ($venue && ($total_existing + $kuota) > $venue['kapasitas']) {
                 header('Location: ' . BASE_URL . '/admin/tiket.php?msg=err_capacity&cap=' . $venue['kapasitas']);
@@ -58,6 +68,10 @@ class TiketController {
         }
 
         if (isset($_POST['edit'])) {
+            if ($harga < 10000) {
+                header('Location: ' . BASE_URL . '/admin/tiket.php?msg=err_price');
+                exit;
+            }
             $id           = (int)$_POST['id'];
             $total_other  = $this->tiketModel->getTotalKuota($ide, $id);
             if ($venue && ($total_other + $kuota) > $venue['kapasitas']) {

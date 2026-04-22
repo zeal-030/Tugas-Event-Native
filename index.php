@@ -1,10 +1,25 @@
 <?php
 session_start();
-require_once 'config/db.php';
+require_once 'bootstrap.php';
+$conn = getDbConnection();
+
+// Global query helper for legacy parts of index.php
+if (!function_exists('query')) {
+    function query($q) {
+        global $conn;
+        $res = mysqli_query($conn, $q);
+        $rows = [];
+        if ($res && !is_bool($res)) {
+            while ($row = mysqli_fetch_assoc($res)) $rows[] = $row;
+        }
+        return $rows;
+    }
+}
 
 $featured_events = query("SELECT e.*, v.nama_venue, (SELECT MIN(harga) FROM tiket WHERE id_event = e.id_event) as min_price 
                          FROM event e JOIN venue v ON e.id_venue = v.id_venue 
-                         ORDER BY e.tanggal DESC LIMIT 6");
+                         WHERE e.tanggal >= CURDATE()
+                         ORDER BY e.tanggal ASC LIMIT 6");
 
 $total_events = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM event"))['t'];
 $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM venue"))['t'];
@@ -394,7 +409,6 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
         }
         .ev-price-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .ev-price       { font-size: 1.05rem; font-weight: 800; color: var(--primary-light); letter-spacing: -0.5px; }
-        .ev-price.free  { color: #34d399; }
 
         .btn-buy {
             background: var(--gradient-primary);
@@ -624,8 +638,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
         <div class="row g-4">
             <?php foreach($featured_events as $e): 
                 $imgSrc = !empty($e['gambar']) ? "assets/img/events/" . $e['gambar'] : null;
-                $priceLabel = $e['min_price'] > 0 ? 'Rp ' . number_format($e['min_price'], 0, ',', '.') : 'GRATIS';
-                $isFree = $e['min_price'] == 0 || $e['min_price'] === null;
+                $priceLabel = 'Rp ' . number_format($e['min_price'] ?? 0, 0, ',', '.');
             ?>
             <div class="col-md-6 col-lg-4">
                 <div class="ev-card">
@@ -639,9 +652,6 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                         <?php endif; ?>
                         <div class="ev-img-overlay"></div>
                         <div class="ev-date-tag"><i class="ri-calendar-3-line"></i> <?= date('d M Y', strtotime($e['tanggal'])) ?></div>
-                        <?php if ($isFree): ?>
-                        <div class="ev-category-tag">GRATIS</div>
-                        <?php endif; ?>
                     </div>
 
                     <div class="ev-body">
@@ -655,7 +665,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                     <div class="ev-footer">
                         <div>
                             <div class="ev-price-label">Mulai dari</div>
-                            <div class="ev-price <?= $isFree ? 'free' : '' ?>"><?= $priceLabel ?></div>
+                            <div class="ev-price"><?= $priceLabel ?></div>
                         </div>
                         <a href="event-detail.php?id=<?= $e['id_event'] ?>" class="btn-buy">
                             <?= isset($_SESSION['login']) ? 'Beli Tiket' : 'Lihat Detail' ?> →

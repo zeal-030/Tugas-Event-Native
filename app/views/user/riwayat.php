@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * View: User Riwayat Tiket
  * Data dari UserDashboardController::riwayat():
@@ -27,6 +27,8 @@ $user = currentUser();
         .ticket-top::after{content:'';position:absolute;bottom:-15px;left:0;right:0;height:30px;background:#11111d;clip-path:polygon(0% 50%,5% 100%,10% 50%,15% 100%,20% 50%,25% 100%,30% 50%,35% 100%,40% 50%,45% 100%,50% 50%,55% 100%,60% 50%,65% 100%,70% 50%,75% 100%,80% 50%,85% 100%,90% 50%,95% 100%,100% 50%)}
         .ticket-bottom{padding:2.5rem 2rem 2rem;text-align:center}
         .qr-large{background:white;padding:15px;border-radius:20px;display:inline-block;margin-bottom:1.5rem;box-shadow:0 10px 40px rgba(0,0,0,.5);border:5px solid #f8fafc}
+        .text-muted { color: rgba(255,255,255,0.45) !important; }
+        .text-secondary { color: rgba(255,255,255,0.6) !important; }
     </style>
 </head>
 <body>
@@ -45,7 +47,7 @@ $user = currentUser();
     </div>
 
     <div class="page-header mt-4 pb-0">
-        <div class="page-title">My Tickets 🎟️</div>
+        <div class="page-title">My Tickets <i class="ri-ticket-2-fill text-primary"></i></div>
         <div class="page-subtitle">Klik tiket untuk melihat detail lengkap dan QR Code</div>
 
         <?php if (isset($_GET['success']) || isset($_GET['payment_success'])): ?>
@@ -59,7 +61,7 @@ $user = currentUser();
     <div class="page-body">
         <?php if (empty($orders)): ?>
         <div class="text-center py-5">
-            <div style="font-size:4rem;">📦</div>
+            <div style="font-size:4rem; color:var(--text-muted); opacity:0.3;"><i class="ri-inbox-archive-line"></i></div>
             <h4 class="mt-3">Belum ada tiket</h4>
             <p class="text-muted">Kamu belum melakukan pemesanan apapun.</p>
             <a href="<?= BASE_URL ?>/user/events.php" class="btn btn-primary">Cari Event</a>
@@ -92,7 +94,7 @@ $user = currentUser();
             // Ambil detail langsung via koneksi
             $details = [];
             $res = mysqli_query(getDbConnection(),
-                "SELECT od.*, t.nama_tiket, e.nama_event, v.nama_venue, v.alamat, e.tanggal
+                "SELECT od.*, t.nama_tiket, e.nama_event, v.nama_venue, v.alamat, e.tanggal, e.gambar
                  FROM order_detail od
                  JOIN tiket t ON od.id_tiket = t.id_tiket
                  JOIN event e ON t.id_event = e.id_event
@@ -124,6 +126,7 @@ $user = currentUser();
                                 'kode'    => $tk['kode_tiket'],
                                 'status'  => $tk['status_checkin'],
                                 'qr'      => $qr_url,
+                                'gambar'  => !empty($d['gambar']) ? BASE_URL . "/assets/img/events/" . $d['gambar'] : ''
                             ]);
                         ?>
                         <div class="col-md-6 col-lg-4">
@@ -167,24 +170,27 @@ $user = currentUser();
 <div class="modal fade" id="ticketModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-ticket">
-            <div class="ticket-top">
-                <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="modal" aria-label="Close"></button>
-                <div class="badge bg-white text-dark small fw-bold mb-2">E-TICKET EVENT</div>
-                <h3 class="fw-bold mb-1" id="m_event"></h3>
-                <div class="small opacity-75" id="m_tanggal"></div>
+            <div class="ticket-top" id="m_banner" style="background-size: cover; background-position: center;">
+                <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); z-index:0;"></div>
+                <div style="position:relative; z-index:1;">
+                    <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="badge bg-white text-dark small fw-bold mb-2">E-TICKET EVENT</div>
+                    <h3 class="fw-bold mb-1" id="m_event"></h3>
+                    <div class="small opacity-75" id="m_tanggal"></div>
+                </div>
             </div>
             <div class="ticket-bottom">
                 <div class="qr-large"><img id="m_qr" src="" alt="QR" width="180"></div>
                 <div class="mb-4">
-                    <div class="small text-muted text-uppercase mb-1">Ticket Holder Code</div>
+                    <div class="small text-secondary text-uppercase mb-1" style="opacity: 0.8; font-weight: 700; letter-spacing: 1px;">Ticket Holder Code</div>
                     <div class="h4 fw-bold text-primary mb-3" id="m_kode"></div>
                     <div class="row text-start g-3">
-                        <div class="col-6"><label class="small text-muted d-block">Tiket Type</label><span class="fw-bold" id="m_tipe"></span></div>
-                        <div class="col-6"><label class="small text-muted d-block">Status</label><span class="fw-bold text-success">READY</span></div>
-                        <div class="col-12"><label class="small text-muted d-block">Location</label><span class="small" id="m_venue"></span><br><span class="text-muted" style="font-size:.7rem;" id="m_alamat"></span></div>
+                        <div class="col-6"><label class="small text-secondary fw-bold d-block mb-1" style="opacity: 0.8;">Tiket Type</label><span class="fw-bold" id="m_tipe"></span></div>
+                        <div class="col-6"><label class="small text-secondary fw-bold d-block mb-1" style="opacity: 0.8;">Status</label><span class="fw-bold" id="m_status"></span></div>
+                        <div class="col-12"><label class="small text-secondary fw-bold d-block mb-1" style="opacity: 0.8;">Location</label><span class="small" id="m_venue"></span><br><span class="text-secondary" style="font-size:.7rem;" id="m_alamat"></span></div>
                     </div>
                 </div>
-                <button onclick="window.print()" class="btn btn-outline-primary w-100 rounded-pill mt-2"><i class="ri-printer-line me-2"></i>Download / Print Ticket</button>
+                <a id="btn-download" href="#" target="_blank" class="btn btn-outline-primary w-100 rounded-pill mt-2"><i class="ri-printer-line me-2"></i>Download / Print Ticket</a>
             </div>
         </div>
     </div>
@@ -200,6 +206,24 @@ function showDetail(data) {
     document.getElementById('m_tipe').innerText   = data.tiket;
     document.getElementById('m_venue').innerText  = data.venue;
     document.getElementById('m_alamat').innerText = data.alamat;
+    document.getElementById('btn-download').href  = '<?= BASE_URL ?>/user/download_ticket.php?kode=' + data.kode;
+
+    const banner = document.getElementById('m_banner');
+    if (data.gambar) {
+        banner.style.backgroundImage = `url('${data.gambar}')`;
+    } else {
+        banner.style.background = 'var(--gradient-primary)';
+    }
+
+    const statusEl = document.getElementById('m_status');
+    if (data.status === 'sudah') {
+        statusEl.innerText = '✓ CHECKED-IN';
+        statusEl.className = 'fw-bold text-muted';
+    } else {
+        statusEl.innerText = 'READY';
+        statusEl.className = 'fw-bold text-success';
+    }
+
     new bootstrap.Modal(document.getElementById('ticketModal')).show();
 }
 </script>

@@ -65,4 +65,24 @@ class AttendeeModel extends BaseModel {
              ORDER BY o.tanggal_order DESC LIMIT 3"
         );
     }
+
+    public function getFilteredAttendees(?int $id_event = null, ?string $status = null): array {
+        $where = ["1=1"];
+        if ($id_event) $where[] = "e.id_event = $id_event";
+        if ($status)   $where[] = "a.status_checkin = '$status'";
+        $where_str = implode(" AND ", $where);
+
+        return $this->fetchAll(
+            "SELECT a.*, t.nama_tiket, e.nama_event, u.nama as customer, v.nama_venue
+             FROM attendee a
+             JOIN order_detail od ON a.id_detail = od.id_detail
+             JOIN orders o ON od.id_order = o.id_order
+             JOIN users u ON o.id_user = u.id_user
+             JOIN tiket t ON od.id_tiket = t.id_tiket
+             JOIN event e ON t.id_event = e.id_event
+             JOIN venue v ON e.id_venue = v.id_venue
+             WHERE $where_str
+             ORDER BY a.waktu_checkin DESC, a.kode_tiket ASC"
+        );
+    }
 }

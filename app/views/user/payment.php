@@ -20,6 +20,8 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
     <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
     <style>
         body { background: var(--bg-base); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
+        .text-muted { color: rgba(255,255,255,0.45) !important; }
+        .text-secondary { color: rgba(255,255,255,0.6) !important; }
 
         /* TOP BAR */
         .pay-topbar {
@@ -64,7 +66,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
         .method-item:last-child { margin-bottom: 0; }
         .method-item:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.04); }
         .method-item.selected { border-color: var(--primary); background: rgba(124,58,237,0.08); }
-        .method-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+        .method-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background: white; border: 1px solid var(--border); }
         .method-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); margin-left: auto; flex-shrink: 0; transition: all 0.15s; }
         .method-item.selected .method-radio { border: 5px solid var(--primary); background: white; }
         .method-detail { display: none; margin-top: 0.75rem; padding: 1rem; background: var(--bg-elevated); border-radius: 10px; font-size: 0.82rem; }
@@ -72,7 +74,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
         .va-number { font-family: 'Courier New', monospace; font-size: 1.4rem; font-weight: 800; color: var(--primary-light); letter-spacing: 3px; display: flex; align-items: center; gap: 0.5rem; }
         .copy-btn { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: var(--primary-light); font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
         .copy-btn:hover { background: rgba(124,58,237,0.3); }
-        .bank-logo { width: 48px; height: 26px; object-fit: contain; border-radius: 4px; background: white; padding: 3px 6px; }
+        .bank-logo { width: 85%; height: 85%; object-fit: contain; }
 
         /* PAY BUTTON */
         .pay-now-btn { background: var(--gradient-primary); color: white; border: none; border-radius: 14px; padding: 1rem; width: 100%; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 20px rgba(124,58,237,0.4); display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
@@ -166,7 +168,9 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
 
             <!-- BCA -->
             <div class="method-item selected" onclick="selectMethod(this, 'detail-bca')">
-                <div class="method-icon" style="background: rgba(0,82,165,0.15);"><i class="ri-bank-fill" style="color:#0052a5;"></i></div>
+                <div class="method-icon" style="background: white;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="bank-logo" alt="BCA">
+                </div>
                 <div>
                     <div class="fw-bold text-white" style="font-size: 0.9rem;">BCA Virtual Account</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Transfer ke nomor VA BCA</div>
@@ -184,7 +188,9 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
 
             <!-- Mandiri -->
             <div class="method-item" onclick="selectMethod(this, 'detail-mandiri')">
-                <div class="method-icon" style="background: rgba(0,128,30,0.15);"><i class="ri-bank-line" style="color:#ffcc00;"></i></div>
+                <div class="method-icon" style="background: white;">
+                    <img src="https://upload.wikimedia.org/wikipedia/id/f/fa/Bank_Mandiri_logo.svg" class="bank-logo" alt="Mandiri">
+                </div>
                 <div>
                     <div class="fw-bold text-white" style="font-size: 0.9rem;">Mandiri Virtual Account</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Transfer ke nomor VA Mandiri</div>
@@ -205,7 +211,9 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
             <div class="pay-section-title"><i class="ri-smartphone-line me-1"></i> Dompet Digital / E-Wallet</div>
 
             <div class="method-item" onclick="selectMethod(this, 'detail-gopay')">
-                <div class="method-icon" style="background: rgba(0,198,107,0.12);"><i class="ri-wallet-3-fill" style="color:#00c66b;"></i></div>
+                <div class="method-icon" style="background: white;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" class="bank-logo" alt="GoPay">
+                </div>
                 <div>
                     <div class="fw-bold text-white" style="font-size: 0.9rem;">GoPay</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Bayar via GoPay / Gojek App</div>
@@ -220,7 +228,9 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
             </div>
 
             <div class="method-item" onclick="selectMethod(this, 'detail-ovo')">
-                <div class="method-icon" style="background: rgba(100,0,200,0.12);"><i class="ri-wallet-2-fill" style="color:#6400c8;"></i></div>
+                <div class="method-icon" style="background: white;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg" class="bank-logo" alt="OVO">
+                </div>
                 <div>
                     <div class="fw-bold text-white" style="font-size: 0.9rem;">OVO</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Bayar via OVO App</div>
@@ -259,7 +269,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                 <div class="mb-3 pb-2" style="border-bottom: 1px dashed rgba(255,255,255,0.07);">
                     <div class="fw-bold text-white mb-1" style="font-size: 0.9rem;"><?= htmlspecialchars($event_name) ?></div>
                     <?php if ($event_date): ?>
-                    <div class="text-muted" style="font-size: 0.75rem;"><i class="ri-calendar-3-line me-1"></i><?= $event_date ?> &bull; <?= htmlspecialchars($venue_name) ?></div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);"><i class="ri-calendar-3-line me-1"></i><?= $event_date ?> &bull; <?= htmlspecialchars($venue_name) ?></div>
                     <?php endif; ?>
                 </div>
                 <?php foreach ($items as $item): ?>
@@ -268,6 +278,15 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                     <span class="fw-bold text-white">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></span>
                 </div>
                 <?php endforeach; ?>
+                <?php 
+                $subtotal = array_sum(array_column($items, 'subtotal'));
+                $discount = $subtotal - $order['total'];
+                if ($discount > 0): ?>
+                <div class="order-line">
+                    <span class="text-success small"><i class="ri-price-tag-3-line-fill"></i> Diskon Promo</span>
+                    <span class="text-success fw-bold small">- Rp <?= number_format($discount, 0, ',', '.') ?></span>
+                </div>
+                <?php endif; ?>
                 <div class="order-line">
                     <span class="text-muted">Biaya Layanan</span>
                     <span class="text-success fw-bold small">GRATIS</span>

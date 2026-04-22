@@ -55,4 +55,30 @@ class UserDashboardController {
 
         require_once __DIR__ . '/../views/user/riwayat.php';
     }
+
+    public function downloadTicket(): void {
+        requireUser();
+        $kode = $_GET['kode'] ?? '';
+        if (!$kode) die("Kode tiket tidak ditemukan.");
+
+        require_once __DIR__ . '/../config/database.php';
+        $conn = getDbConnection();
+
+        // Get ticket info
+        $ticket = mysqli_fetch_assoc(mysqli_query($conn, 
+            "SELECT a.*, t.nama_tiket, e.nama_event, v.nama_venue, v.alamat, e.tanggal, t.harga, o.id_order, u.nama as nama_user, e.gambar
+             FROM attendee a
+             JOIN order_detail od ON a.id_detail = od.id_detail
+             JOIN orders o ON od.id_order = o.id_order
+             JOIN tiket t ON od.id_tiket = t.id_tiket
+             JOIN event e ON t.id_event = e.id_event
+             JOIN venue v ON e.id_venue = v.id_venue
+             JOIN users u ON o.id_user = u.id_user
+             WHERE a.kode_tiket = '".mysqli_real_escape_string($conn, $kode)."' AND o.id_user = ".currentUser()['id']
+        ));
+
+        if (!$ticket) die("Tiket tidak valid atau bukan milik Anda.");
+
+        require_once __DIR__ . '/../views/user/ticket_pdf.php';
+    }
 }

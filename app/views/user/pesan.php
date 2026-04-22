@@ -68,9 +68,24 @@ $user = currentUser();
         .qty-input:focus { outline: none; border-color: var(--primary); }
 
         /* ---- VOUCHER ---- */
-        .voucher-input { background: var(--bg-elevated); border: 1.5px solid var(--border); color: var(--text-primary); border-radius: 10px; padding: 0.7rem 1rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 1px; width: 100%; transition: border-color 0.2s; }
-        .voucher-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
-        .voucher-input::placeholder { text-transform: none; letter-spacing: 0; }
+        .voucher-input-refined { 
+            background: var(--bg-elevated) !important; 
+            border: 1.5px solid var(--border) !important; 
+            border-left: none !important;
+            color: var(--text-primary) !important; 
+            border-radius: 0 12px 12px 0 !important; 
+            padding: 0.7rem 1rem; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-size: 0.875rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        .voucher-input-refined:focus { 
+            outline: none; 
+            border-color: var(--primary) !important; 
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.15); 
+        }
+        .voucher-input-refined::placeholder { text-transform: none; letter-spacing: 0; }
 
         /* ---- ORDER SUMMARY STICKY ---- */
         .order-summary-sticky { position: sticky; top: 76px; }
@@ -180,12 +195,14 @@ $user = currentUser();
             <!-- Kode Voucher -->
             <div class="section-card">
                 <div class="section-label"><i class="ri-price-tag-3-line-fill" style="color: var(--accent-2)"></i> Kode Voucher / Promo</div>
-                <div class="input-group">
-                    <span class="input-group-text" style="background:var(--bg-elevated); border-color:var(--border); color:var(--text-muted);">
-                        <i class="ri-gift-2-line"></i>
-                    </span>
-                    <input type="text" name="voucher_code" id="v_code" class="voucher-input" style="border-radius: 0 10px 10px 0; border-left: none;" placeholder="Masukkan kode promo (contoh: DISKON50)">
-                    <button type="button" onclick="checkVoucher()" class="btn btn-primary ms-2" style="border-radius: 10px; font-size: 0.85rem; white-space: nowrap;">
+                <div class="d-flex gap-2">
+                    <div class="input-group" style="flex: 1;">
+                        <span class="input-group-text" style="background:var(--bg-elevated); border-color:var(--border); color:var(--text-muted); border-radius: 12px 0 0 12px;">
+                            <i class="ri-gift-2-line"></i>
+                        </span>
+                        <input type="text" name="voucher_code" id="v_code" class="form-control voucher-input-refined" placeholder="Masukkan kode promo (contoh: DISKON50)">
+                    </div>
+                    <button type="button" onclick="checkVoucher()" class="btn btn-primary px-4" style="border-radius: 12px; font-weight: 700;">
                         Gunakan
                     </button>
                 </div>

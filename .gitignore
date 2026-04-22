@@ -11,3 +11,7 @@ Thumbs.db
 
 # XAMPP / environment specific files
 *.log
+
+# Asset uploads (images)
+assets/img/events/*
+!assets/img/events/.gitkeep

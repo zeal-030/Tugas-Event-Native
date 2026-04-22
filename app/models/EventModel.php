@@ -43,7 +43,8 @@ class EventModel extends BaseModel {
              (SELECT MIN(harga) FROM tiket WHERE id_event = e.id_event) as min_price, 
              (SELECT COUNT(*) FROM tiket WHERE id_event = e.id_event) as tiket_types 
              FROM event e JOIN venue v ON e.id_venue = v.id_venue 
-             ORDER BY e.tanggal DESC"
+             WHERE e.tanggal >= CURDATE()
+             ORDER BY e.tanggal ASC"
         );
     }
 
@@ -51,7 +52,8 @@ class EventModel extends BaseModel {
         return $this->fetchAll(
             "SELECT e.*, v.nama_venue FROM event e
              JOIN venue v ON e.id_venue = v.id_venue
-             ORDER BY tanggal DESC LIMIT $limit"
+             WHERE e.tanggal >= CURDATE()
+             ORDER BY e.tanggal ASC LIMIT $limit"
         );
     }
 

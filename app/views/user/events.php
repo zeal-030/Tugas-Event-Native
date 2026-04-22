@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * View: User Browse Events
  * Data dari UserEventController: $events
@@ -44,9 +44,13 @@ $user = currentUser();
             <?php foreach($events as $i => $e) : ?>
             <div class="col-md-4 col-sm-6">
                 <div class="event-card">
-                    <div class="event-card-img" style="background: var(--gradient-primary); height: 160px;">
+                    <div class="event-card-img" style="height: 160px; overflow: hidden; position: relative; background: var(--bg-elevated);">
+                        <?php if(!empty($e['gambar'])): ?>
+                            <img src="<?= BASE_URL ?>/assets/img/events/<?= $e['gambar'] ?>" alt="<?= htmlspecialchars($e['nama_event']) ?>" style="width:100%; height:100%; object-fit:cover;">
+                        <?php else: ?>
+                            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; z-index:1;">🎪</div>
+                        <?php endif; ?>
                         <div class="event-card-img-overlay"></div>
-                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; z-index:1;">🎪</div>
                         <div class="event-date-float">📅 <?= date('d M Y', strtotime($e['tanggal'])) ?></div>
                     </div>
                     <div class="event-card-body">

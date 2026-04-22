@@ -101,6 +101,8 @@ $user = currentUser();
                 'success_edit' => 'Data tiket berhasil diperbarui!',
                 'success_del'  => 'Data tiket telah dihapus.',
                 'err_capacity' => 'Kuota melebihi kapasitas venue (Maks: ' . ($_GET['cap'] ?? 0) . ' pax).',
+                'err_price'    => 'Harga tiket minimal Rp 10.000 dan tidak boleh gratis.',
+                'err_date'     => 'Tidak dapat menambah/mengubah tiket untuk event yang sudah berlalu.',
                 default        => '',
             } ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -147,10 +149,14 @@ $user = currentUser();
             <div class="tk-mb"><label class="tk-label">Nama Kategori</label><input type="text" name="nama_tiket" class="tk-field" placeholder="E.g. VIP Front Row" required></div>
             <div class="tk-mb"><label class="tk-label">Event Terkait</label>
                 <select name="id_event" class="tk-field" required><option value="">-- Pilih Event --</option>
-                    <?php foreach ($events as $e): ?><option value="<?= $e['id_event'] ?>"><?= htmlspecialchars($e['nama_event']) ?></option><?php endforeach; ?>
+                    <?php foreach ($events as $e): 
+                        if (strtotime($e['tanggal']) < strtotime(date('Y-m-d'))) continue;
+                    ?>
+                        <option value="<?= $e['id_event'] ?>"><?= htmlspecialchars($e['nama_event']) ?> (<?= date('d M Y', strtotime($e['tanggal'])) ?>)</option>
+                    <?php endforeach; ?>
                 </select></div>
             <div class="tk-grid-2">
-                <div><label class="tk-label">Harga Tiket</label><div class="tk-input-group"><div class="tk-input-pre">Rp</div><input type="number" name="harga" class="tk-field" placeholder="0" required></div></div>
+                <div><label class="tk-label">Harga Tiket</label><div class="tk-input-group"><div class="tk-input-pre">Rp</div><input type="number" name="harga" class="tk-field" placeholder="0" min="10000" required></div></div>
                 <div><label class="tk-label">Stok Awal</label><input type="number" name="kuota" class="tk-field" placeholder="0" required></div>
             </div>
         </div><div class="tk-modal-footer"><button type="button" class="tk-btn-cancel" data-bs-dismiss="modal">Batal</button><button type="submit" name="submit" class="tk-btn-save"><i class="ri-check-double-line"></i> Simpan</button></div></form>
@@ -168,10 +174,16 @@ $user = currentUser();
             <div class="tk-mb"><label class="tk-label">Nama Kategori</label><input type="text" name="nama_tiket" id="etk-nama" class="tk-field" required></div>
             <div class="tk-mb"><label class="tk-label">Event Terkait</label>
                 <select name="id_event" id="etk-event" class="tk-field" required>
-                    <?php foreach ($events as $e): ?><option value="<?= $e['id_event'] ?>"><?= htmlspecialchars($e['nama_event']) ?></option><?php endforeach; ?>
+                    <?php foreach ($events as $e): 
+                        $isPast = strtotime($e['tanggal']) < strtotime(date('Y-m-d'));
+                    ?>
+                        <option value="<?= $e['id_event'] ?>" <?= $isPast ? 'disabled style="color:var(--danger);"' : '' ?>>
+                            <?= htmlspecialchars($e['nama_event']) ?> (<?= date('d M Y', strtotime($e['tanggal'])) ?>) <?= $isPast ? '[BERAKHIR]' : '' ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select></div>
             <div class="tk-grid-2">
-                <div><label class="tk-label">Harga</label><div class="tk-input-group"><div class="tk-input-pre">Rp</div><input type="number" name="harga" id="etk-harga" class="tk-field" required></div></div>
+                <div><label class="tk-label">Harga</label><div class="tk-input-group"><div class="tk-input-pre">Rp</div><input type="number" name="harga" id="etk-harga" class="tk-field" min="10000" required></div></div>
                 <div><label class="tk-label">Sisa Stok</label><input type="number" name="kuota" id="etk-kuota" class="tk-field" required></div>
             </div>
         </div><div class="tk-modal-footer"><button type="button" class="tk-btn-cancel" data-bs-dismiss="modal">Batal</button><button type="submit" name="edit" class="tk-btn-save"><i class="ri-check-double-line"></i> Simpan Perubahan</button></div></form>

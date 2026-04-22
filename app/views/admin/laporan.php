@@ -59,9 +59,9 @@ $user = currentUser();
                 <a href="<?= BASE_URL ?>/admin/export_excel.php" class="btn btn-success btn-sm">
                     <i class="ri-file-excel-2-fill"></i> Export Excel
                 </a>
-                <button onclick="window.print()" class="btn btn-ghost btn-sm">
-                    <i class="ri-printer-line"></i> Cetak PDF
-                </button>
+                <a href="<?= BASE_URL ?>/admin/export_pdf.php" target="_blank" class="btn btn-ghost btn-sm">
+                    <i class="ri-file-pdf-2-line"></i> Cetak Premium PDF
+                </a>
             </div>
             <div style="width: 1px; height: 30px; background: var(--border);"></div>
             <div class="user-badge">
