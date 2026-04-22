@@ -81,4 +81,50 @@ class UserDashboardController {
 
         require_once __DIR__ . '/../views/user/ticket_pdf.php';
     }
+
+    public function profil(): void {
+        requireLogin();
+        $id_user = currentUser()['id'];
+        
+        require_once __DIR__ . '/../models/UserModel.php';
+        $userModel = new UserModel();
+        $profile_user = $userModel->findById($id_user);
+
+        // Fetch Stats for Profile
+        require_once __DIR__ . '/../config/database.php';
+        $conn = getDbConnection();
+        $total_tickets = mysqli_fetch_assoc(mysqli_query($conn,
+            "SELECT COUNT(*) as t FROM attendee a
+             JOIN order_detail od ON a.id_detail = od.id_detail
+             JOIN orders o ON od.id_order = o.id_order
+             WHERE o.id_user = $id_user AND o.status = 'paid'"
+        ))['t'] ?? 0;
+
+        $total_spent = mysqli_fetch_assoc(mysqli_query($conn,
+            "SELECT SUM(total) as t FROM orders WHERE id_user = $id_user AND status = 'paid'"
+        ))['t'] ?? 0;
+        
+        $msg = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nama  = trim($_POST['nama'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $pass  = $_POST['password'] ?? '';
+            
+            // Basic validation
+            if (!$nama || !$email) {
+                $msg = 'err_input';
+            } else {
+                $hashed = $pass ? password_hash($pass, PASSWORD_DEFAULT) : null;
+                if ($userModel->update($id_user, $nama, $email, $hashed)) {
+                    $_SESSION['nama'] = $nama; // Update session
+                    $msg  = 'success';
+                    $profile_user = $userModel->findById($id_user); // Refresh data
+                } else {
+                    $msg = 'err_db';
+                }
+            }
+        }
+        
+        require_once __DIR__ . '/../views/user/profil.php';
+    }
 }

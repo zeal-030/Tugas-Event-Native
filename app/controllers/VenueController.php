@@ -18,8 +18,13 @@ class VenueController {
         }
 
         if (isset($_GET['del'])) {
-            $this->venueModel->delete((int)$_GET['del']);
-            header('Location: ' . BASE_URL . '/admin/venue.php?msg=success_del');
+            $id = (int)$_GET['del'];
+            if ($this->venueModel->hasEvents($id)) {
+                header('Location: ' . BASE_URL . '/admin/venue.php?msg=err_has_events');
+            } else {
+                $this->venueModel->delete($id);
+                header('Location: ' . BASE_URL . '/admin/venue.php?msg=success_del');
+            }
             exit;
         }
 

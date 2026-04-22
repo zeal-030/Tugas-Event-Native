@@ -31,11 +31,25 @@ function currentUser(): array {
  * Redirect user berdasarkan role mereka
  */
 function redirectByRole(string $role): void {
-    $target = in_array($role, ADMIN_ROLES)
-        ? BASE_URL . '/admin/dashboard.php'
-        : BASE_URL . '/user/dashboard.php';
+    if ($role === 'admin') {
+        $target = BASE_URL . '/admin/dashboard.php';
+    } elseif ($role === 'petugas') {
+        $target = BASE_URL . '/petugas/dashboard.php';
+    } else {
+        $target = BASE_URL . '/user/dashboard.php';
+    }
     header("Location: $target");
     exit;
+}
+
+/**
+ * Wajib role petugas
+ */
+function requirePetugas(): void {
+    requireLogin();
+    if (currentRole() !== 'petugas') {
+        redirectByRole(currentRole());
+    }
 }
 
 /**
@@ -49,13 +63,22 @@ function requireLogin(): void {
 }
 
 /**
- * Wajib role admin atau petugas — jika tidak, redirect ke login
+ * Wajib role admin (Super Admin)
  */
 function requireAdmin(): void {
     requireLogin();
-    if (!in_array(currentRole(), ADMIN_ROLES)) {
-        header('Location: ' . BASE_URL . '/login.php');
-        exit;
+    if (currentRole() !== 'admin') {
+        redirectByRole(currentRole());
+    }
+}
+
+/**
+ * Wajib role staff (Admin atau Petugas) — Untuk Check-in/Scanner
+ */
+function requireStaff(): void {
+    requireLogin();
+    if (!in_array(currentRole(), ['admin', 'petugas'])) {
+        redirectByRole(currentRole());
     }
 }
 
@@ -65,8 +88,7 @@ function requireAdmin(): void {
 function requireSuperAdmin(): void {
     requireLogin();
     if (currentRole() !== 'admin') {
-        header('Location: ' . BASE_URL . '/admin/dashboard.php');
-        exit;
+        redirectByRole(currentRole());
     }
 }
 
@@ -76,7 +98,6 @@ function requireSuperAdmin(): void {
 function requireUser(): void {
     requireLogin();
     if (currentRole() !== 'user') {
-        header('Location: ' . BASE_URL . '/admin/dashboard.php');
-        exit;
+        redirectByRole(currentRole());
     }
 }

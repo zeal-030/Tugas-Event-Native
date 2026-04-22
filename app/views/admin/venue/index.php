@@ -98,10 +98,11 @@ $user = currentUser();
         <div class="alert alert-<?= strpos($msg,'err_') === 0 ? 'danger' : 'success' ?> alert-dismissible fade show mb-4" role="alert">
             <i class="<?= strpos($msg,'err_') === 0 ? 'ri-alert-fill' : 'ri-checkbox-circle-fill' ?>"></i>
             <?= match($msg) {
-                'success_add'  => 'Venue baru berhasil ditambahkan!',
-                'success_edit' => 'Data venue berhasil diperbarui!',
-                'success_del'  => 'Venue telah dihapus.',
-                default        => htmlspecialchars($msg),
+                'success_add'      => 'Venue baru berhasil ditambahkan!',
+                'success_edit'     => 'Data venue berhasil diperbarui!',
+                'success_del'      => 'Venue telah dihapus.',
+                'err_has_events'   => 'Venue tidak bisa dihapus karena masih digunakan oleh event aktif!',
+                default            => htmlspecialchars($msg),
             } ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>

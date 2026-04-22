@@ -33,21 +33,17 @@ function isActivePage(string $page): string {
         </div>
 
         <div class="sidebar-nav">
-            <?php if (in_array($user['role'], ADMIN_ROLES)): ?>
-                <div class="nav-section-label">Main Menu</div>
+            <?php if ($user['role'] === 'admin'): ?>
+                <div class="nav-section-label">Admin Menu</div>
                 <a href="<?= BASE_URL ?>/admin/dashboard.php" class="nav-link <?= isActivePage('dashboard.php') ?>">
                     <div class="nav-icon"><i class="ri-dashboard-3-line"></i></div><span>Dashboard</span>
                 </a>
-
-                <?php if ($isAdmin): ?>
                 <a href="<?= BASE_URL ?>/admin/venue.php" class="nav-link <?= isActive('/admin/venue') ?>">
                     <div class="nav-icon"><i class="ri-building-2-line"></i></div><span>Venues</span>
                 </a>
                 <a href="<?= BASE_URL ?>/admin/event.php" class="nav-link <?= isActive('/admin/event') ?>">
                     <div class="nav-icon"><i class="ri-calendar-event-line"></i></div><span>Events</span>
                 </a>
-                <?php endif; ?>
-
                 <a href="<?= BASE_URL ?>/admin/tiket.php" class="nav-link <?= isActive('/admin/tiket') ?>">
                     <div class="nav-icon"><i class="ri-ticket-2-line"></i></div><span>Tickets</span>
                 </a>
@@ -65,6 +61,24 @@ function isActivePage(string $page): string {
                 <a href="<?= BASE_URL ?>/admin/laporan.php" class="nav-link <?= isActivePage('laporan.php') ?>">
                     <div class="nav-icon"><i class="ri-bar-chart-grouped-line"></i></div><span>Reports</span>
                 </a>
+                <a href="<?= BASE_URL ?>/user/profil.php" class="nav-link <?= isActivePage('profil.php') ?>">
+                    <div class="nav-icon"><i class="ri-user-settings-line"></i></div><span>My Profile</span>
+                </a>
+
+            <?php elseif ($user['role'] === 'petugas'): ?>
+                <div class="nav-section-label">Petugas Menu</div>
+                <a href="<?= BASE_URL ?>/petugas/dashboard.php" class="nav-link <?= isActivePage('dashboard.php') ?>">
+                    <div class="nav-icon"><i class="ri-dashboard-3-line"></i></div><span>Dashboard</span>
+                </a>
+                <a href="<?= BASE_URL ?>/petugas/checkin.php" class="nav-link <?= isActive('/petugas/checkin') ?>">
+                    <div class="nav-icon"><i class="ri-qr-scan-2-line"></i></div><span>Check-in</span>
+                </a>
+                <a href="<?= BASE_URL ?>/petugas/scanner.php" class="nav-link <?= isActive('/petugas/scanner') ?>">
+                    <div class="nav-icon"><i class="ri-camera-lens-line"></i></div><span>QR Scanner</span>
+                </a>
+                <a href="<?= BASE_URL ?>/petugas/profil.php" class="nav-link <?= isActive('/petugas/profil') ?>">
+                    <div class="nav-icon"><i class="ri-user-settings-line"></i></div><span>My Profile</span>
+                </a>
 
             <?php else: ?>
                 <div class="nav-section-label">Buyer Menu</div>
@@ -76,6 +90,9 @@ function isActivePage(string $page): string {
                 </a>
                 <a href="<?= BASE_URL ?>/user/riwayat.php" class="nav-link <?= isActivePage('riwayat.php') ?>">
                     <div class="nav-icon"><i class="ri-ticket-2-line"></i></div><span>My Tickets</span>
+                </a>
+                <a href="<?= BASE_URL ?>/user/profil.php" class="nav-link <?= isActivePage('profil.php') ?>">
+                    <div class="nav-icon"><i class="ri-user-settings-line"></i></div><span>My Profile</span>
                 </a>
             <?php endif; ?>
         </div>

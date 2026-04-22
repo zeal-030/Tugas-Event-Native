@@ -27,8 +27,10 @@ $user = currentUser();
         .ticket-top::after{content:'';position:absolute;bottom:-15px;left:0;right:0;height:30px;background:#11111d;clip-path:polygon(0% 50%,5% 100%,10% 50%,15% 100%,20% 50%,25% 100%,30% 50%,35% 100%,40% 50%,45% 100%,50% 50%,55% 100%,60% 50%,65% 100%,70% 50%,75% 100%,80% 50%,85% 100%,90% 50%,95% 100%,100% 50%)}
         .ticket-bottom{padding:2.5rem 2rem 2rem;text-align:center}
         .qr-large{background:white;padding:15px;border-radius:20px;display:inline-block;margin-bottom:1.5rem;box-shadow:0 10px 40px rgba(0,0,0,.5);border:5px solid #f8fafc}
-        .text-muted { color: rgba(255,255,255,0.45) !important; }
-        .text-secondary { color: rgba(255,255,255,0.6) !important; }
+        .text-muted-custom { color: var(--text-muted) !important; opacity: 0.8; }
+        .text-secondary-custom { color: var(--text-secondary) !important; opacity: 0.9; }
+        [data-theme="dark"] .text-muted-custom { color: #cbd5e1 !important; opacity: 0.6; }
+        [data-theme="dark"] .text-secondary-custom { color: #f1f5f9 !important; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -73,7 +75,7 @@ $user = currentUser();
             <div class="d-flex justify-content-between align-items-start mb-4 border-bottom border-white border-opacity-10 pb-3">
                 <div>
                     <div class="text-primary small fw-bold mb-1">#ORD-<?= $o['id_order'] ?></div>
-                    <div class="text-muted small"><?= date('d M Y, H:i', strtotime($o['tanggal_order'])) ?> &nbsp;&bull;&nbsp; Rp <?= number_format($o['total'], 0, ',', '.') ?></div>
+                    <div class="text-muted-custom small"><?= date('d M Y, H:i', strtotime($o['tanggal_order'])) ?> &nbsp;&bull;&nbsp; Rp <?= number_format($o['total'], 0, ',', '.') ?></div>
                 </div>
                 <div class="text-end">
                     <?php if ($o['status'] === 'paid'): ?>
@@ -112,11 +114,12 @@ $user = currentUser();
                     while ($row = mysqli_fetch_assoc($res2)) $attendees[] = $row;
                 ?>
                 <div class="mb-4 pb-3 border-bottom border-white border-opacity-5">
-                    <h5 class="fw-bold mb-1"><?= htmlspecialchars($d['nama_event']) ?></h5>
-                    <p class="text-muted small mb-3"><i class="ri-map-pin-line"></i> <?= htmlspecialchars($d['nama_venue']) ?></p>
+                    <h5 class="fw-bold mb-1" style="color: var(--text-primary);"><?= htmlspecialchars($d['nama_event']) ?></h5>
+                    <p class="small mb-3 text-muted-custom"><i class="ri-map-pin-line"></i> <?= htmlspecialchars($d['nama_venue']) ?></p>
                     <div class="row g-3">
                         <?php foreach ($attendees as $tk):
                             $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($tk['kode_tiket']);
+                            $is_expired = date('Y-m-d') > $d['tanggal'];
                             $ticket_data = json_encode([
                                 'event'   => $d['nama_event'],
                                 'venue'   => $d['nama_venue'],
@@ -125,6 +128,7 @@ $user = currentUser();
                                 'tiket'   => $d['nama_tiket'],
                                 'kode'    => $tk['kode_tiket'],
                                 'status'  => $tk['status_checkin'],
+                                'expired' => $is_expired,
                                 'qr'      => $qr_url,
                                 'gambar'  => !empty($d['gambar']) ? BASE_URL . "/assets/img/events/" . $d['gambar'] : ''
                             ]);
@@ -138,12 +142,19 @@ $user = currentUser();
                                     <img src="<?= $qr_url ?>" alt="QR" width="60" height="60" style="display:block;">
                                 </div>
                                 <div style="flex:1;min-width:0">
-                                    <div style="font-size:.72rem;color:var(--text-muted);margin-bottom:.3rem;font-weight:500;"><?= htmlspecialchars($d['nama_tiket']) ?></div>
+                                    <div style="font-size:.72rem;margin-bottom:.3rem;font-weight:500;" class="text-muted-custom"><?= htmlspecialchars($d['nama_tiket']) ?></div>
                                     <div style="font-family:'Courier New',monospace;font-size:.78rem;font-weight:700;color:var(--primary-light);background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);border-radius:7px;padding:.25rem .5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.45rem;">
                                         <?= htmlspecialchars($tk['kode_tiket']) ?>
                                     </div>
-                                    <span class="ticket-badge <?= $tk['status_checkin'] === 'sudah' ? 'badge-used' : 'badge-ready' ?>">
-                                        <?= $tk['status_checkin'] === 'sudah' ? '✓ Checked-in' : '🔍 Klik Detail' ?>
+                                    <?php 
+                                        $is_expired = date('Y-m-d') > $d['tanggal'];
+                                    ?>
+                                    <span class="ticket-badge <?= $tk['status_checkin'] === 'sudah' ? 'badge-used' : ($is_expired ? 'bg-danger text-white' : 'badge-ready') ?>">
+                                        <?php 
+                                            if ($tk['status_checkin'] === 'sudah') echo '✓ Checked-in';
+                                            elseif ($is_expired) echo '✕ Expired';
+                                            else echo '🔍 Klik Detail';
+                                        ?>
                                     </span>
                                 </div>
                             </div>
@@ -219,6 +230,9 @@ function showDetail(data) {
     if (data.status === 'sudah') {
         statusEl.innerText = '✓ CHECKED-IN';
         statusEl.className = 'fw-bold text-muted';
+    } else if (data.expired) {
+        statusEl.innerText = '✕ EXPIRED';
+        statusEl.className = 'fw-bold text-danger';
     } else {
         statusEl.innerText = 'READY';
         statusEl.className = 'fw-bold text-success';

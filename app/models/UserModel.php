@@ -33,4 +33,16 @@ class UserModel extends BaseModel {
         $row  = $this->fetchOne("SELECT COUNT(*) as t FROM users WHERE role = '$role'");
         return (int)($row['t'] ?? 0);
     }
+
+    public function update(int $id, string $nama, string $email, ?string $password = null): bool {
+        $nama  = $this->escape($nama);
+        $email = $this->escape($email);
+        $sql   = "UPDATE users SET nama = '$nama', email = '$email'";
+        if ($password !== null) {
+            $password = $this->escape($password);
+            $sql .= ", password = '$password'";
+        }
+        $sql .= " WHERE id_user = $id";
+        return $this->execute($sql);
+    }
 }

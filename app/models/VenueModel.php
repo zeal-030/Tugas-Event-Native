@@ -32,6 +32,11 @@ class VenueModel extends BaseModel {
         );
     }
 
+    public function hasEvents(int $id): bool {
+        $row = $this->fetchOne("SELECT COUNT(*) as t FROM event WHERE id_venue = $id");
+        return (int)($row['t'] ?? 0) > 0;
+    }
+
     public function delete(int $id): bool {
         return $this->execute("DELETE FROM venue WHERE id_venue=$id");
     }

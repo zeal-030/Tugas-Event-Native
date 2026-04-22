@@ -134,7 +134,7 @@ $user = currentUser();
                                 <?php foreach ($recent_orders as $o): ?>
                                 <tr style="background: transparent !important;">
                                     <td style="background: transparent !important; border: none;"><code>#ORD-<?= $o['id_order'] ?></code></td>
-                                    <td class="text-white" style="background: transparent !important; border: none;"><?= htmlspecialchars($o['nama']) ?></td>
+                                    <td class="text-adaptive" style="background: transparent !important; border: none; color: var(--text-primary);"><?= htmlspecialchars($o['nama']) ?></td>
                                     <td class="text-primary fw-bold" style="background: transparent !important; border: none;">Rp <?= number_format($o['total'], 0, ',', '.') ?></td>
                                     <td style="background: transparent !important; border: none;"><span class="badge-status badge-<?= $o['status'] ?>"><?= strtoupper($o['status']) ?></span></td>
                                 </tr>
@@ -149,7 +149,7 @@ $user = currentUser();
             <div class="col-lg-4">
                 <div class="card p-4" style="height: 100%; background: var(--bg-surface) !important; border: 1px solid var(--border) !important;">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold mb-0 text-white">📅 Events</h5>
+                        <h5 class="fw-bold mb-0" style="color: var(--text-primary);">📅 Events</h5>
                         <div class="badge-status badge-success" style="font-size: 0.65rem;">Active</div>
                     </div>
                     <div class="d-flex flex-column gap-3">
@@ -157,8 +157,8 @@ $user = currentUser();
                         <div class="d-flex align-items-center gap-3 p-3 rounded-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
                             <div class="stat-icon primary small" style="width:35px; height:35px; font-size:0.8rem; flex-shrink:0;">📅</div>
                             <div class="overflow-hidden">
-                                <div class="text-white fw-600 small text-truncate"><?= htmlspecialchars($e['nama_event']) ?></div>
-                                <div style="font-size:0.75rem; color: #8e8ea8;"><?= date('d M', strtotime($e['tanggal'])) ?> · <?= htmlspecialchars($e['nama_venue']) ?></div>
+                                <div class="fw-600 small text-truncate" style="color: var(--text-primary);"><?= htmlspecialchars($e['nama_event']) ?></div>
+                                <div style="font-size:0.75rem; color: var(--text-muted);"><?= date('d M', strtotime($e['tanggal'])) ?> · <?= htmlspecialchars($e['nama_venue']) ?></div>
                             </div>
                         </div>
                         <?php endforeach; ?>

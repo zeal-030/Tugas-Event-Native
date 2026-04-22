@@ -16,7 +16,7 @@ class AttendeeModel extends BaseModel {
     public function findByKode(string $kode): ?array {
         $kode = $this->escape($kode);
         return $this->fetchOne(
-            "SELECT a.*, t.nama_tiket, e.nama_event, u.nama as customer
+            "SELECT a.*, t.nama_tiket, e.nama_event, e.tanggal as tanggal_event, u.nama as customer
              FROM attendee a
              JOIN order_detail od ON a.id_detail = od.id_detail
              JOIN orders o ON od.id_order = o.id_order
