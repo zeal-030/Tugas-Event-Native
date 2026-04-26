@@ -26,7 +26,11 @@ $user = currentUser();
         .live-badge::before { content: ''; width: 6px; height: 6px; background: #34d399; border-radius: 50%; animation: blink 1.2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
         .camera-body { padding: 1.5rem; }
-        #reader { border: none !important; border-radius: 16px !important; overflow: hidden !important; width: 100% !important; }
+        #reader { border: none !important; border-radius: 16px !important; overflow: hidden !important; width: 100% !important; min-height: 350px; background: #1a1d21; }
+        #reader__dashboard_section_csr button { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; margin-top: 10px; }
+        #reader__dashboard_section_csr span { color: var(--text-muted); font-size: 0.8rem; }
+        #reader__status_span { display: none !important; }
+        #reader video { border-radius: 12px; }
         .side-panel { display: flex; flex-direction: column; gap: 1.25rem; }
         .result-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; animation: slideIn 0.4s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
@@ -145,14 +149,60 @@ $user = currentUser();
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-function onScanSuccess(decodedText) {
-    html5QrcodeScanner.clear();
-    try { new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play(); } catch(e) {}
-    document.getElementById('scan-result').value = decodedText;
-    document.getElementById('scan-form').submit();
-}
-let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 260, height: 260 } }, false);
-html5QrcodeScanner.render(onScanSuccess, () => {});
+    // Konfigurasi scanner yang lebih optimal
+    const scannerConfig = {
+        fps: 20, // Lebih cepat lebih baik untuk deteksi
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+            // Membuat kotak scan responsif (70% dari sisi terkecil)
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            let qrboxSize = Math.floor(minEdgeSize * 0.7);
+            return {
+                width: qrboxSize,
+                height: qrboxSize
+            };
+        },
+        aspectRatio: 1.0,
+        rememberLastUsedCamera: true,
+        showTorchButtonIfSupported: true
+    };
+
+    const html5QrcodeScanner = new Html5QrcodeScanner("reader", scannerConfig, /* verbose= */ false);
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // Segera hentikan scanner agar tidak double-scan
+        html5QrcodeScanner.clear().then(() => {
+            // Feedback suara (opsional)
+            try {
+                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                audio.play().catch(e => console.log("Audio playback blocked by browser"));
+            } catch(e) {}
+
+            // Masukkan hasil ke form dan submit
+            document.getElementById('scan-result').value = decodedText;
+            document.getElementById('scan-form').submit();
+        }).catch(err => {
+            console.error("Failed to clear scanner", err);
+            // Tetap submit meskipun clear gagal
+            document.getElementById('scan-result').value = decodedText;
+            document.getElementById('scan-form').submit();
+        });
+    }
+
+    function onScanFailure(error) {
+        // Tidak perlu log error setiap frame kecuali untuk debugging
+        // console.warn(`Code scan error = ${error}`);
+    }
+
+    // Jalankan render
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+    // Fokus otomatis ke input manual jika dibutuhkan
+    document.addEventListener('keydown', function(e) {
+        if (e.key === '/') {
+            e.preventDefault();
+            document.getElementById('kode_tiket_manual').focus();
+        }
+    });
 </script>
 </body>
 </html>

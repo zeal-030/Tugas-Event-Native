@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * View: Login Page
  * Data dari AuthController: $error (bool), $registered (bool)

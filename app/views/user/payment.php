@@ -319,12 +319,27 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
     </div>
 </div>
 
+<!-- Hidden form for auto-cancel -->
+<form id="auto-cancel-form" method="POST" style="display:none;">
+    <input type="hidden" name="cancel" value="1">
+</form>
+
 <script>
 // Countdown timer
-let seconds = 14 * 60 + 59;
+let seconds = <?= $order['status'] === 'pending' ? (1 * 0 + 59) : 0 ?>; // 2 Menit simulasi (atau sesuaikan kebutuhan)
 const timerEl = document.getElementById('timer');
 const countdown = setInterval(() => {
-    if (seconds <= 0) { clearInterval(countdown); timerEl.innerText = '00:00'; return; }
+    if (seconds <= 0) { 
+        clearInterval(countdown); 
+        timerEl.innerText = '00:00'; 
+        
+        // Popup dan Auto Cancel
+        setTimeout(() => {
+            alert('Waktu pembayaran telah habis (Tidak Dibayar). Pesanan Anda akan dibatalkan secara otomatis.');
+            document.getElementById('auto-cancel-form').submit();
+        }, 100);
+        return; 
+    }
     seconds--;
     const m = String(Math.floor(seconds / 60)).padStart(2, '0');
     const s = String(seconds % 60).padStart(2, '0');

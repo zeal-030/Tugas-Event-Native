@@ -84,15 +84,22 @@ class UserEventController {
                 if (!empty($voucher_code)) {
                     $v = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM voucher WHERE UPPER(kode_voucher)='$voucher_code' AND status='aktif' AND kuota>0"));
                     if ($v) {
-                        $potongan = $v['potongan'];
-                        $id_v = $v['id_voucher'];
-                        mysqli_query($conn, "UPDATE voucher SET kuota=kuota-1 WHERE id_voucher=$id_v");
+                        if ($v['potongan'] >= $total_gross) {
+                            $error = "Voucher tidak dapat digunakan! Nilai potongan (Rp " . number_format($v['potongan'], 0, ',', '.') . ") tidak boleh melebihi atau sama dengan total harga tiket (Rp " . number_format($total_gross, 0, ',', '.') . "). Tiket tidak boleh gratis!";
+                        } else {
+                            $potongan = $v['potongan'];
+                            $id_v = $v['id_voucher'];
+                            mysqli_query($conn, "UPDATE voucher SET kuota=kuota-1 WHERE id_voucher=$id_v");
+                        }
+                    } else {
+                        $error = "Voucher tidak ditemukan, sudah habis, atau tidak aktif.";
                     }
                 }
                 
-                $total_final = max(0, $total_gross - $potongan);
-                
-                mysqli_begin_transaction($conn);
+                if (!$error) {
+                    $total_final = $total_gross - $potongan;
+                    
+                    mysqli_begin_transaction($conn);
                 try {
                     mysqli_query($conn, "INSERT INTO orders (id_user, total, status, id_voucher) VALUES ($id_user, $total_final, 'pending', $id_v)");
                     $id_order = mysqli_insert_id($conn);
@@ -122,6 +129,7 @@ class UserEventController {
                 }
             }
         }
+    }
 
         require_once __DIR__ . '/../views/user/pesan.php';
     }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * View: Register Page
  * Data dari AuthController: $error (string|null)

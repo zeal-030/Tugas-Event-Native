@@ -20,10 +20,25 @@ class TiketModel extends BaseModel {
     }
 
     public function getTotalKuota(int $id_event, int $exclude_id = 0): int {
+        // 1. Ambil sisa kuota yang tersedia di tabel tiket (kecuali yang sedang di-edit)
         $sql = "SELECT SUM(kuota) as total FROM tiket WHERE id_event = $id_event";
         if ($exclude_id > 0) $sql .= " AND id_tiket != $exclude_id";
         $row = $this->fetchOne($sql);
-        return (int)($row['total'] ?? 0);
+        $sisa = (int)($row['total'] ?? 0);
+
+        // 2. Ambil TOTAL tiket yang sudah terjual untuk event ini (semua jenis tiket)
+        // Yang sudah terjual tetap memakan kapasitas venue meskipun jenis tiketnya sedang diedit
+        $sqlSold = "SELECT SUM(od.qty) as sold 
+                    FROM order_detail od 
+                    JOIN orders o ON od.id_order = o.id_order 
+                    JOIN tiket t ON od.id_tiket = t.id_tiket
+                    WHERE t.id_event = $id_event AND o.status != 'cancel'";
+        
+        $rowSold = $this->fetchOne($sqlSold);
+        $terjual = (int)($rowSold['sold'] ?? 0);
+
+        // Total alokasi = Tiket yang masih bisa dibeli + Tiket yang sudah terjual
+        return $sisa + $terjual;
     }
 
     public function count(): int {

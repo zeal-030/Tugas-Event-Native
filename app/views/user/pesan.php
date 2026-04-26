@@ -328,6 +328,17 @@ function recalc() {
     }
 
     document.getElementById('sum_sub').innerText = "Rp " + subtotal.toLocaleString('id-ID');
+    
+    // Validasi voucher terhadap subtotal baru
+    if (discount > 0 && subtotal <= discount) {
+        discount = 0;
+        const vMsg = document.getElementById('v_msg');
+        vMsg.className = "small mt-2 text-warning fw-bold";
+        vMsg.innerHTML = `<i class="ri-error-warning-fill"></i> Voucher dilepas (Total harus lebih besar dari potongan)`;
+        document.getElementById('row_disc').style.display = 'none';
+        document.getElementById('v_code').value = "";
+    }
+
     const final = Math.max(0, subtotal - discount);
     document.getElementById('sum_total').innerText = "Rp " + final.toLocaleString('id-ID');
 }
@@ -344,13 +355,27 @@ function checkVoucher() {
     .then(r => r.json())
     .then(data => {
         if(data.status === 'success') {
-            discount = data.potongan;
-            msg.className = "small mt-2 text-success fw-bold";
-            msg.innerText = `Voucher valid! Hemat Rp ${discount.toLocaleString('id-ID')}`;
-            msg.innerHTML = `<i class="ri-checkbox-circle-fill"></i> ` + msg.innerText;
-            document.getElementById('row_disc').style.removeProperty('display');
-            document.getElementById('row_disc').style.display = 'flex';
-            document.getElementById('sum_disc').innerText = "- Rp " + discount.toLocaleString('id-ID');
+            // Hitung subtotal saat ini
+            let currentSub = 0;
+            Object.keys(prices).forEach(id => {
+                const q = parseInt(document.getElementById('t-' + id).value || 0);
+                currentSub += q * prices[id];
+            });
+
+            if (data.potongan >= currentSub) {
+                discount = 0;
+                msg.className = "small mt-2 text-danger fw-bold";
+                msg.innerHTML = `<i class="ri-close-circle-fill"></i> Voucher tidak dapat digunakan! Nilai potongan (Rp ${data.potongan.toLocaleString('id-ID')}) harus lebih kecil dari total harga tiket.`;
+                document.getElementById('row_disc').style.display = 'none';
+            } else {
+                discount = data.potongan;
+                msg.className = "small mt-2 text-success fw-bold";
+                msg.innerText = `Voucher valid! Hemat Rp ${discount.toLocaleString('id-ID')}`;
+                msg.innerHTML = `<i class="ri-checkbox-circle-fill"></i> ` + msg.innerText;
+                document.getElementById('row_disc').style.removeProperty('display');
+                document.getElementById('row_disc').style.display = 'flex';
+                document.getElementById('sum_disc').innerText = "- Rp " + discount.toLocaleString('id-ID');
+            }
         } else {
             discount = 0;
             msg.className = "small mt-2 text-danger fw-bold";
