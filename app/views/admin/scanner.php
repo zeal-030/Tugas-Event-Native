@@ -26,7 +26,7 @@ $user = currentUser();
         .live-badge::before { content: ''; width: 6px; height: 6px; background: #34d399; border-radius: 50%; animation: blink 1.2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
         .camera-body { padding: 1.5rem; }
-        #reader { border: none !important; border-radius: 16px !important; overflow: hidden !important; width: 100% !important; min-height: 350px; background: #1a1d21; }
+        #reader { border: none !important; border-radius: 16px !important; overflow: hidden !important; width: 100% !important; max-width: 400px !important; margin: 0 auto !important; min-height: 350px; background: #1a1d21; }
         #reader__dashboard_section_csr button { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; margin-top: 10px; }
         #reader__dashboard_section_csr span { color: var(--text-muted); font-size: 0.8rem; }
         #reader__status_span { display: none !important; }
@@ -166,11 +166,11 @@ $user = currentUser();
         showTorchButtonIfSupported: true
     };
 
-    const html5QrcodeScanner = new Html5QrcodeScanner("reader", scannerConfig, /* verbose= */ false);
+    const html5QrCode = new Html5Qrcode("reader");
 
     function onScanSuccess(decodedText, decodedResult) {
         // Segera hentikan scanner agar tidak double-scan
-        html5QrcodeScanner.clear().then(() => {
+        html5QrCode.stop().then(() => {
             // Feedback suara (opsional)
             try {
                 const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
@@ -181,8 +181,8 @@ $user = currentUser();
             document.getElementById('scan-result').value = decodedText;
             document.getElementById('scan-form').submit();
         }).catch(err => {
-            console.error("Failed to clear scanner", err);
-            // Tetap submit meskipun clear gagal
+            console.error("Failed to stop scanner", err);
+            // Tetap submit meskipun stop gagal
             document.getElementById('scan-result').value = decodedText;
             document.getElementById('scan-form').submit();
         });
@@ -193,8 +193,16 @@ $user = currentUser();
         // console.warn(`Code scan error = ${error}`);
     }
 
-    // Jalankan render
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    // Jalankan langsung tanpa klik start
+    html5QrCode.start(
+        { facingMode: "environment" }, // Prioritas kamera belakang
+        scannerConfig,
+        onScanSuccess,
+        onScanFailure
+    ).catch(err => {
+        console.error("Error starting scanner", err);
+        document.getElementById('reader').innerHTML = '<div class="p-4 text-center text-muted" style="margin-top: 100px;">Kamera tidak ditemukan atau izin akses ditolak.<br>Silakan gunakan input manual.</div>';
+    });
 
     // Fokus otomatis ke input manual jika dibutuhkan
     document.addEventListener('keydown', function(e) {

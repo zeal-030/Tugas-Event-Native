@@ -94,8 +94,10 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
 <!-- TOP BAR -->
 <div class="pay-topbar">
     <div class="pay-brand">
-        <div class="logo"><i class="ri-ticket-2-fill" style="color:white;"></i></div>
-        <span class="brand-text"><?= APP_NAME ?></span>
+        <a href="<?= BASE_URL ?>/user/events.php" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.6rem;">
+            <div class="logo"><i class="ri-ticket-2-fill" style="color:white;"></i></div>
+            <span class="brand-text"><?= APP_NAME ?></span>
+        </a>
     </div>
     <div class="d-flex align-items-center gap-2">
         <?php if ($order['status'] === 'pending'): ?>
@@ -324,7 +326,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
 
 <script>
 // Countdown timer
-let seconds = <?= $order['status'] === 'pending' ? (1 * 0 + 59) : 0 ?>; // 2 Menit simulasi (atau sesuaikan kebutuhan)
+let seconds = <?= $order['status'] === 'pending' ? (15 * 60) : 0 ?>; // 15 Menit simulasi (atau sesuaikan kebutuhan)
 const timerEl = document.getElementById('timer');
 const countdown = setInterval(() => {
     if (seconds <= 0) { 

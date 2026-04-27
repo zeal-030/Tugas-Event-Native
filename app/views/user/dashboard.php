@@ -60,7 +60,7 @@ $user = currentUser();
                 <div class="stat-card info">
                     <div class="stat-icon info"><i class="ri-wallet-3-line"></i></div>
                     <div class="stat-value" style="font-size:1.3rem;">Rp <?= number_format($total_spent ?? 0, 0, ',', '.') ?></div>
-                    <div class="stat-label">Total Investment</div>
+                    <div class="stat-label">Total Spent</div>
                 </div>
             </div>
         </div>

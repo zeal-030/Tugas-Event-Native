@@ -106,8 +106,57 @@ $user = currentUser();
             </div>
             <div class="col-lg-4">
                 <div class="table-wrapper p-4">
-                    <h5 class="fw-bold mb-4">Distribution</h5>
-                    <div style="height: 250px;"><canvas id="distChart"></canvas></div>
+                    <h5 class="fw-bold mb-4">Order Status Breakdown</h5>
+                    <?php
+                    $conn = getDbConnection();
+                    $statusQuery = mysqli_query($conn, "SELECT status, COUNT(*) as count FROM orders GROUP BY status");
+                    $orderStats = ['paid' => 0, 'pending' => 0, 'failed' => 0, 'total' => 0];
+                    if ($statusQuery) {
+                        while($row = mysqli_fetch_assoc($statusQuery)) {
+                            $st = strtolower($row['status']);
+                            if ($st === 'success' || $st === 'paid' || $st === 'settlement') {
+                                $orderStats['paid'] += $row['count'];
+                            } elseif ($st === 'pending') {
+                                $orderStats['pending'] += $row['count'];
+                            } else {
+                                $orderStats['failed'] += $row['count'];
+                            }
+                            $orderStats['total'] += $row['count'];
+                        }
+                    }
+                    $pctPaid = $orderStats['total'] > 0 ? round(($orderStats['paid'] / $orderStats['total']) * 100) : 0;
+                    $pctPending = $orderStats['total'] > 0 ? round(($orderStats['pending'] / $orderStats['total']) * 100) : 0;
+                    $pctFailed = $orderStats['total'] > 0 ? round(($orderStats['failed'] / $orderStats['total']) * 100) : 0;
+                    ?>
+                    <div class="d-flex flex-column justify-content-center" style="height: 250px;">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold" style="color: var(--text-primary);"><i class="ri-checkbox-circle-fill text-success me-1"></i> Success / Paid</span>
+                                <span class="text-success fw-bold"><?= $pctPaid ?>%</span>
+                            </div>
+                            <div class="progress rounded-pill" style="height: 10px; background: rgba(255,255,255,0.05);">
+                                <div class="progress-bar bg-success rounded-pill" style="width: <?= $pctPaid ?>%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold" style="color: var(--text-primary);"><i class="ri-time-fill text-warning me-1"></i> Pending</span>
+                                <span class="text-warning fw-bold"><?= $pctPending ?>%</span>
+                            </div>
+                            <div class="progress rounded-pill" style="height: 10px; background: rgba(255,255,255,0.05);">
+                                <div class="progress-bar bg-warning rounded-pill" style="width: <?= $pctPending ?>%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold" style="color: var(--text-primary);"><i class="ri-close-circle-fill text-danger me-1"></i> Failed / Canceled</span>
+                                <span class="text-danger fw-bold"><?= $pctFailed ?>%</span>
+                            </div>
+                            <div class="progress rounded-pill" style="height: 10px; background: rgba(255,255,255,0.05);">
+                                <div class="progress-bar bg-danger rounded-pill" style="width: <?= $pctFailed ?>%"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,16 +234,7 @@ new Chart(revCtx, {
         plugins: { legend: { display: false } },
         scales: { y: { display: false }, x: { grid: { display: false } } } }
 });
-const distCtx = document.getElementById('distChart').getContext('2d');
-new Chart(distCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Concerts','Seminar','Workshop'],
-        datasets: [{ data: [55,25,20], backgroundColor: ['#7c3aed','#06b6d4','#10b981'], borderWidth: 0 }]
-    },
-    options: { responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { color: '#8e8ea8', padding: 20 } } } }
-});
+
 </script>
 </body>
 </html>
