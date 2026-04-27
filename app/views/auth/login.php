@@ -88,7 +88,7 @@
                     Sign In <i class="ri-arrow-right-line-short" style="font-size: 1.2rem;"></i>
                 </button>
                 <div class="text-center small">
-                    <span class="text-muted">Belum punya akun?</span>
+                    <span style="color: var(--text-muted);">Belum punya akun?</span>
                     <a href="<?= BASE_URL ?>/register.php" class="text-primary fw-600 text-decoration-none">Daftar Sekarang</a>
                 </div>
             </form>

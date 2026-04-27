@@ -169,7 +169,6 @@ $user = currentUser();
                         <div style="flex: 1;">
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <div class="fw-bold"><?= htmlspecialchars($t['nama_tiket']) ?></div>
-                                <span class="ticket-type-badge">Regular</span>
                             </div>
                             <div class="fw-bold" style="color:var(--primary-light); font-size:1.05rem;">Rp <?= number_format($t['harga'],0,',','.') ?></div>
                             <div class="text-muted" style="font-size:0.75rem; margin-top:0.2rem;">
@@ -214,7 +213,7 @@ $user = currentUser();
                 <div class="d-flex gap-3 align-items-start">
                     <i class="ri-information-fill mt-1" style="color: var(--accent); font-size: 1.1rem; flex-shrink: 0;"></i>
                     <div class="small text-secondary lh-lg">
-                        <strong class="text-white">Syarat &amp; Ketentuan Pembelian Tiket:</strong><br>
+                        <strong style="color: var(--accent);">Syarat &amp; Ketentuan Pembelian Tiket:</strong><br>
                         • Tiket yang sudah dibeli <strong>tidak dapat di-refund</strong>.<br>
                         • QR Code hanya valid untuk satu kali check-in di pintu masuk.<br>
                         • Simpan e-ticket Anda dengan baik, tunjukkan saat masuk venue.
@@ -256,7 +255,7 @@ $user = currentUser();
                             </div>
                             <div style="border-top: 1.5px dashed rgba(124,58,237,0.3); margin: 0.75rem 0;"></div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-white">Total Bayar</span>
+                                <span class="fw-bold" style="color: var(--text-primary);">Total Bayar</span>
                                 <span class="fw-bold text-primary" id="sum_total" style="font-size: 1.35rem;">Rp 0</span>
                             </div>
                         </div>
@@ -309,7 +308,7 @@ function recalc() {
         if(qty > 0) {
             const rowSub = qty * prices[id];
             subtotal += rowSub;
-            itemsHtml += `<div class="summary-item-row"><span><span class="fw-bold text-white">${names[id]}</span> <span class="text-muted">×${qty}</span></span><span class="fw-bold">Rp ${rowSub.toLocaleString('id-ID')}</span></div>`;
+            itemsHtml += `<div class="summary-item-row"><span><span class="fw-bold" style="color: var(--text-primary);">${names[id]}</span> <span class="text-muted">×${qty}</span></span><span class="fw-bold">Rp ${rowSub.toLocaleString('id-ID')}</span></div>`;
         }
     });
 

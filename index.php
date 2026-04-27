@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'bootstrap.php';
 $conn = getDbConnection();
 
@@ -23,6 +22,7 @@ $featured_events = query("SELECT e.*, v.nama_venue, (SELECT MIN(harga) FROM tike
 
 $total_events = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM event"))['t'];
 $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM venue"))['t'];
+$total_tiket = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM tiket"))['t'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -38,8 +38,8 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
         .pub-nav {
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            background: rgba(15, 15, 23, 0.75) !important;
-            border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+            background: var(--bg-navbar) !important;
+            border-bottom: 1px solid var(--border) !important;
             padding: 1.1rem 0 !important;
         }
 
@@ -98,8 +98,8 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(124,58,237,0.12);
-            border: 1px solid rgba(124,58,237,0.3);
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
             color: var(--primary-light);
             padding: 0.45rem 1.1rem;
             border-radius: 50px;
@@ -108,6 +108,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
             letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
             animation: fadeDown 0.6s ease both;
         }
         .hero-badge::before {
@@ -173,7 +174,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
         }
 
         .btn-hero-ghost {
-            background: rgba(255,255,255,0.05);
+            background: var(--bg-surface);
             color: var(--text-primary);
             font-weight: 600;
             padding: 0.85rem 2rem;
@@ -187,8 +188,8 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
             transition: background 0.25s, border-color 0.25s;
         }
         .btn-hero-ghost:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.15);
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
             color: var(--text-primary);
         }
 
@@ -426,8 +427,9 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
 
         /* ─── CTA ─── */
         .cta-wrap {
-            background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(6,182,212,0.1) 100%);
-            border: 1px solid rgba(124,58,237,0.2);
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-glow);
             border-radius: 28px;
             padding: 4rem 3rem;
             position: relative;
@@ -444,45 +446,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
         .cta-sub   { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; }
 
         /* ─── Footer ─── */
-        .site-footer {
-            background: var(--bg-surface);
-            border-top: 1px solid var(--border);
-            padding: 3rem 0 2rem;
-        }
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            margin-bottom: 0.75rem;
-        }
-        .footer-brand-icon {
-            width: 36px; height: 36px;
-            background: var(--gradient-primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-        .footer-brand-name {
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .footer-copy {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 0;
-        }
-        .footer-links a {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .footer-links a:hover { color: var(--primary-light); }
+
 
         /* ─── Responsive ─── */
         @media (max-width: 768px) {
@@ -557,17 +521,8 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
             </div>
             <div class="col">
                 <div class="stat-pill">
-                    <div class="stat-pill-num">10k+</div>
+                    <div class="stat-pill-num"><?= $total_tiket ?></div>
                     <div class="stat-pill-label">Tiket Terjual</div>
-                </div>
-            </div>
-            <div class="col-auto d-none d-md-flex align-items-center px-4">
-                <div class="stats-divider"></div>
-            </div>
-            <div class="col">
-                <div class="stat-pill">
-                    <div class="stat-pill-num">99%</div>
-                    <div class="stat-pill-label">Kepuasan User</div>
                 </div>
             </div>
         </div>
@@ -624,7 +579,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
                 <h2 class="section-title mb-1">Event <span class="text-gradient">Terbaru</span></h2>
                 <p class="section-sub m-0">Jangan sampai ketinggalan, amankan tiketmu sekarang!</p>
             </div>
-            <a href="login.php" class="btn-hero-ghost" style="padding: 0.5rem 1.25rem; font-size: 0.82rem; border-radius: 10px;">
+            <a href="events.php" class="btn-hero-ghost" style="padding: 0.5rem 1.25rem; font-size: 0.82rem; border-radius: 10px;">
                 Lihat Semua <i class="ri-arrow-right-line ms-1"></i>
             </a>
         </div>
@@ -704,31 +659,7 @@ $total_venues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FRO
     </div>
 </section>
 
-<!-- ═══════════════ FOOTER ═══════════════ -->
-<footer class="site-footer">
-    <div class="container">
-        <div class="row align-items-center g-3">
-            <div class="col-md-6">
-                <div class="footer-brand">
-                    <div class="footer-brand-icon"><i class="ri-ticket-2-fill" style="color:white;"></i></div>
-                    <span class="footer-brand-name">E-Tiket</span>
-                </div>
-                <p class="footer-copy">Platform manajemen tiket event modern yang aman dan cepat.</p>
-            </div>
-            <div class="col-md-6 text-md-end">
-                <div class="footer-links d-flex gap-3 justify-content-md-end">
-                    <a href="index.php">Home</a>
-                    <a href="#events">Events</a>
-                    <a href="#features">Fitur</a>
-                    <a href="login.php">Login</a>
-                </div>
-                <p class="footer-copy mt-2">© <?= date('Y') ?> E-Tiket. All rights reserved.</p>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<?php include 'includes/footer.php'; ?>
 <script>
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(a => {

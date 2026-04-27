@@ -6,6 +6,11 @@
         </a>
         <div class="d-flex gap-3 align-items-center">
             <a href="index.php" class="nav-link-pub <?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Home</a>
+            <a href="about.php" class="nav-link-pub <?= basename($_SERVER['PHP_SELF']) == 'about.php' ? 'active' : '' ?>">About</a>
+            <a href="events.php" class="nav-link-pub <?= basename($_SERVER['PHP_SELF']) == 'events.php' ? 'active' : '' ?>">Events</a>
+            <button id="theme-toggle" class="btn btn-ghost btn-sm btn-icon" title="Toggle Theme">
+                <i class="ri-moon-line" id="theme-icon"></i>
+            </button>
             <?php if(!isset($_SESSION['login'])): ?>
                 <a href="login.php" class="btn btn-primary btn-sm px-4">Login</a>
             <?php else: ?>
@@ -14,3 +19,24 @@
         </div>
     </div>
 </nav>
+
+<script>
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    function updateThemeIcon(theme) {
+        themeIcon.className = theme === 'dark' ? 'ri-sun-line' : 'ri-moon-line';
+    }
+
+    // Init icon
+    updateThemeIcon(document.documentElement.getAttribute('data-theme'));
+
+    themeBtn.addEventListener('click', () => {
+        let currentTheme = document.documentElement.getAttribute('data-theme');
+        let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+</script>

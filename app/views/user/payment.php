@@ -20,8 +20,6 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
     <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');</script>
     <style>
         body { background: var(--bg-base); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
-        .text-muted { color: rgba(255,255,255,0.45) !important; }
-        .text-secondary { color: rgba(255,255,255,0.6) !important; }
 
         /* TOP BAR */
         .pay-topbar {
@@ -117,7 +115,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
 <div class="result-page">
     <div class="result-card">
         <div class="result-icon success"><i class="ri-checkbox-circle-fill" style="color:var(--success);"></i></div>
-        <h2 class="fw-bold text-white mb-2">Pembayaran Berhasil!</h2>
+        <h2 class="fw-bold text-primary mb-2">Pembayaran Berhasil!</h2>
         <p class="text-muted mb-1">No. Pesanan: <strong class="text-primary">#ORD-<?= $order['id_order'] ?></strong></p>
         <p class="text-muted mb-4">E-ticket Anda siap! Silakan cek di menu "My Tickets".</p>
         <div class="py-3 px-4 mb-4 rounded-3" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">
@@ -138,8 +136,8 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
 <div class="result-page">
     <div class="result-card">
         <div class="result-icon danger"><i class="ri-close-circle-fill" style="color:var(--danger);"></i></div>
-        <h2 class="fw-bold text-white mb-2">Pesanan Dibatalkan</h2>
-        <p class="text-muted mb-4">Pesanan <strong class="text-white">#ORD-<?= $order['id_order'] ?></strong> telah dibatalkan. Kuota tiket sudah dikembalikan.</p>
+        <h2 class="fw-bold text-danger mb-2">Pesanan Dibatalkan</h2>
+        <p class="text-muted mb-4">Pesanan <strong class="text-primary">#ORD-<?= $order['id_order'] ?></strong> telah dibatalkan. Kuota tiket sudah dikembalikan.</p>
         <a href="<?= BASE_URL ?>/user/events.php" class="pay-now-btn text-decoration-none d-flex mb-2">
             <i class="ri-search-line me-2"></i> Cari Event Lainnya
         </a>
@@ -172,7 +170,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                     <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="bank-logo" alt="BCA">
                 </div>
                 <div>
-                    <div class="fw-bold text-white" style="font-size: 0.9rem;">BCA Virtual Account</div>
+                    <div class="fw-bold" style="font-size: 0.9rem; color: var(--text-primary);">BCA Virtual Account</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Transfer ke nomor VA BCA</div>
                 </div>
                 <div class="method-radio" style="border: 5px solid var(--primary); background: white;"></div>
@@ -192,7 +190,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                     <img src="https://upload.wikimedia.org/wikipedia/id/f/fa/Bank_Mandiri_logo.svg" class="bank-logo" alt="Mandiri">
                 </div>
                 <div>
-                    <div class="fw-bold text-white" style="font-size: 0.9rem;">Mandiri Virtual Account</div>
+                    <div class="fw-bold" style="font-size: 0.9rem; color: var(--text-primary);">Mandiri Virtual Account</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Transfer ke nomor VA Mandiri</div>
                 </div>
                 <div class="method-radio"></div>
@@ -215,7 +213,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                     <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" class="bank-logo" alt="GoPay">
                 </div>
                 <div>
-                    <div class="fw-bold text-white" style="font-size: 0.9rem;">GoPay</div>
+                    <div class="fw-bold" style="font-size: 0.9rem; color: var(--text-primary);">GoPay</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Bayar via GoPay / Gojek App</div>
                 </div>
                 <div class="method-radio"></div>
@@ -232,7 +230,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg" class="bank-logo" alt="OVO">
                 </div>
                 <div>
-                    <div class="fw-bold text-white" style="font-size: 0.9rem;">OVO</div>
+                    <div class="fw-bold" style="font-size: 0.9rem; color: var(--text-primary);">OVO</div>
                     <div class="text-muted" style="font-size: 0.75rem;">Bayar via OVO App</div>
                 </div>
                 <div class="method-radio"></div>
@@ -266,16 +264,16 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                 <div class="text-white text-opacity-75" style="font-size: 0.75rem;">#ORD-<?= $order['id_order'] ?></div>
             </div>
             <div class="order-card-body">
-                <div class="mb-3 pb-2" style="border-bottom: 1px dashed rgba(255,255,255,0.07);">
-                    <div class="fw-bold text-white mb-1" style="font-size: 0.9rem;"><?= htmlspecialchars($event_name) ?></div>
+                <div class="mb-3 pb-2" style="border-bottom: 1px dashed var(--border);">
+                    <div class="fw-bold" style="font-size: 0.9rem; color: var(--text-primary);"><?= htmlspecialchars($event_name) ?></div>
                     <?php if ($event_date): ?>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);"><i class="ri-calendar-3-line me-1"></i><?= $event_date ?> &bull; <?= htmlspecialchars($venue_name) ?></div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);"><i class="ri-calendar-3-line me-1"></i><?= $event_date ?> &bull; <?= htmlspecialchars($venue_name) ?></div>
                     <?php endif; ?>
                 </div>
                 <?php foreach ($items as $item): ?>
                 <div class="order-line">
                     <span><?= htmlspecialchars($item['nama_tiket']) ?> <span class="badge" style="background:rgba(124,58,237,0.15);color:var(--primary-light);font-size:0.65rem;">×<?= $item['qty'] ?></span></span>
-                    <span class="fw-bold text-white">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></span>
+                    <span class="fw-bold" style="color: var(--text-primary);">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></span>
                 </div>
                 <?php endforeach; ?>
                 <?php 
@@ -293,7 +291,7 @@ $venue_name = !empty($items) ? $items[0]['nama_venue'] : '';
                 </div>
             </div>
             <div class="order-total">
-                <span class="fw-bold text-white">Total Pembayaran</span>
+                <span class="fw-bold" style="color: var(--text-primary);">Total Pembayaran</span>
                 <span class="fw-bold text-primary" style="font-size: 1.3rem;">Rp <?= number_format($order['total'], 0, ',', '.') ?></span>
             </div>
         </div>

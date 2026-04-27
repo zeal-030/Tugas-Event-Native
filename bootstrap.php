@@ -6,3 +6,7 @@
 require_once __DIR__ . '/app/config/constants.php';
 require_once __DIR__ . '/app/config/database.php';
 require_once __DIR__ . '/app/config/auth.php';
+
+// Start session globally
+startSession();
+

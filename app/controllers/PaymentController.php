@@ -51,6 +51,12 @@ class PaymentController {
                         mysqli_query($conn, "UPDATE tiket SET kuota = kuota + $qty WHERE id_tiket = $id_t");
                     }
 
+                    // Restore voucher quota
+                    if (!empty($order['id_voucher'])) {
+                        $id_v = (int)$order['id_voucher'];
+                        mysqli_query($conn, "UPDATE voucher SET kuota = kuota + 1 WHERE id_voucher = $id_v");
+                    }
+
                     // Delete generated attendees (QR codes)
                     mysqli_query($conn, "DELETE FROM attendee WHERE id_detail IN (SELECT id_detail FROM order_detail WHERE id_order = $id_order)");
 

@@ -72,7 +72,7 @@ $user = currentUser();
 
         <?php foreach ($orders as $o): ?>
         <div class="ticket-item">
-            <div class="d-flex justify-content-between align-items-start mb-4 border-bottom border-white border-opacity-10 pb-3">
+            <div class="d-flex justify-content-between align-items-start mb-4 pb-3" style="border-bottom: 1px solid var(--border);">
                 <div>
                     <div class="text-primary small fw-bold mb-1">#ORD-<?= $o['id_order'] ?></div>
                     <div class="text-muted-custom small"><?= date('d M Y, H:i', strtotime($o['tanggal_order'])) ?> &nbsp;&bull;&nbsp; Rp <?= number_format($o['total'], 0, ',', '.') ?></div>
@@ -113,7 +113,7 @@ $user = currentUser();
                     $res2 = mysqli_query(getDbConnection(), "SELECT * FROM attendee WHERE id_detail = $id_detail");
                     while ($row = mysqli_fetch_assoc($res2)) $attendees[] = $row;
                 ?>
-                <div class="mb-4 pb-3 border-bottom border-white border-opacity-5">
+                <div class="mb-4 pb-3" style="border-bottom: 1px solid var(--border);">
                     <h5 class="fw-bold mb-1" style="color: var(--text-primary);"><?= htmlspecialchars($d['nama_event']) ?></h5>
                     <p class="small mb-3 text-muted-custom"><i class="ri-map-pin-line"></i> <?= htmlspecialchars($d['nama_venue']) ?></p>
                     <div class="row g-3">

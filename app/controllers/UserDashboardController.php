@@ -51,6 +51,49 @@ class UserDashboardController {
         require_once __DIR__ . '/../config/database.php';
         $conn    = getDbConnection();
 
+        // ---- AUTO CANCEL EXPIRED PENDING ORDERS ----
+        $today = date('Y-m-d');
+        // Cari order pending milik user ini dimana event-nya sudah lewat
+        $q_expired = mysqli_query($conn, 
+            "SELECT DISTINCT o.id_order, o.id_voucher 
+             FROM orders o
+             JOIN order_detail od ON o.id_order = od.id_order
+             JOIN tiket t ON od.id_tiket = t.id_tiket
+             JOIN event e ON t.id_event = e.id_event
+             WHERE o.id_user = $id_user AND o.status = 'pending' AND e.tanggal < '$today'"
+        );
+
+        while ($exp = mysqli_fetch_assoc($q_expired)) {
+            $id_order = (int)$exp['id_order'];
+            $id_voucher = !empty($exp['id_voucher']) ? (int)$exp['id_voucher'] : null;
+            mysqli_begin_transaction($conn);
+            try {
+                // Update order status to cancel
+                mysqli_query($conn, "UPDATE orders SET status = 'cancel' WHERE id_order = $id_order");
+                
+                // Restore kuota tiket
+                $details = mysqli_query($conn, "SELECT id_tiket, qty FROM order_detail WHERE id_order = $id_order");
+                while ($row = mysqli_fetch_assoc($details)) {
+                    $id_t = (int)$row['id_tiket'];
+                    $qty = (int)$row['qty'];
+                    mysqli_query($conn, "UPDATE tiket SET kuota = kuota + $qty WHERE id_tiket = $id_t");
+                }
+
+                // Restore voucher quota
+                if ($id_voucher) {
+                    mysqli_query($conn, "UPDATE voucher SET kuota = kuota + 1 WHERE id_voucher = $id_voucher");
+                }
+                
+                // Hapus attendee (QR) yang mungkin sudah terbuat
+                mysqli_query($conn, "DELETE FROM attendee WHERE id_detail IN (SELECT id_detail FROM order_detail WHERE id_order = $id_order)");
+                
+                mysqli_commit($conn);
+            } catch (Exception $e) {
+                mysqli_rollback($conn);
+            }
+        }
+        // --------------------------------------------
+
         $orders  = $this->orderModel->getByUser($id_user);
 
         require_once __DIR__ . '/../views/user/riwayat.php';
